@@ -1,0 +1,196 @@
+{
+	"servers": [
+		{
+			"name": "Survivors.gg #1 [ 2x Solo - Quad ]",
+			"wipes":
+			[
+				{
+					"day": "Lundi",
+					"hour": "14h00",
+					"type": "FullWipe"
+				},
+				{
+					"day": "Jeudi",
+					"hour": "14h00",
+					"type": "FullWipe"
+				}
+			],
+			"group_limit": "4",
+			"ip": "209.237.141.93:28014",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/11900765"
+		},
+		{
+			"name": "Survivors.gg Mondays [ 2x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Lundi",
+					"hour": "16h00",
+					"type": "MapWipe, FullWipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "10",
+			"ip": "64.52.81.125:28024",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13729298"
+		},
+		{
+			"name": "Survivors.gg [ 2x Solo/Duo ]",
+			"wipes":
+			[
+				{
+					"day": "Mardi",
+					"hour": "14h00",
+					"type": "FullWipe"
+				},
+				{
+					"day": "Vendredi",
+					"hour": "16h00",
+					"type": "MapWipe, pas de wipe le vendredi après la MàJ"
+				}
+			],
+			"group_limit": "2",
+			"ip": "64.52.81.234:28024",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/14702632"
+		},
+		{
+			"name": "Survivors.gg #2 [ 2x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Mardi",
+					"hour": "16h00",
+					"type": "MapWipe, FullWipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "8",
+			"ip": "64.52.81.49:28024",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/14474564"
+		},
+		{
+			"name": "Survivors.gg #3 [ 2x Solo/Duo/Trio ]",
+			"wipes":
+			[
+				{
+					"day": "Mercredi",
+					"hour": "14h00",
+					"type": "MapWipe, FullWipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "3",
+			"ip": "45.88.230.97:28024",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/14702579"
+		},
+		{
+			"name": "Survivors.gg #Medium [ 2x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Mercredi",
+					"hour": "16h00",
+					"type": "MapWipe, FullWipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "0",
+			"ip": "45.88.230.93:28024",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13065465"
+		},
+		{
+			"name": "Survivors.gg Large [ 2x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Jeudi",
+					"hour": "16h00",
+					"type": "FullWipe"
+				}
+			],
+			"group_limit": "8",
+			"ip": "209.237.141.10:28015",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/12550139"
+		},
+		{
+			"name": "Survivors.gg #5 [ 2x Solo/Duo/Trio ]",
+			"wipes":
+			[
+				{
+					"day": "Vendredi",
+					"hour": "14h00",
+					"type": "FullWipe"
+				}
+			],
+			"group_limit": "3",
+			"ip": "209.237.141.11:28035",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/12550140"
+		},
+		{
+			"name": "Survivors.gg Main [ 2x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Vendredi",
+					"hour": "18h00",
+					"type": "MapWipe, FullWipe tous les mois vendredi après la MàJ"
+				}
+			],
+			"group_limit": "0",
+			"ip": "154.6.138.9:28015",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/12240141"
+		},
+		{
+			"name": "Survivors.gg #6 [ 2x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Samedi",
+					"hour": "12h00",
+					"type": "MapWipe, FullWipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "8",
+			"ip": "64.52.81.48:28014",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/11900208"
+		},
+		{
+			"name": "Survivors.gg [ 2x Solo - Quad ]",
+			"wipes":
+			[
+				{
+					"day": "Samedi",
+					"hour": "15h00",
+					"type": "MapWipe, FullWipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "4",
+			"ip": "45.88.230.97:28014",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/14702633"
+		},
+		{
+			"name": "Survivors.gg #7 [ 2x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Dimanche",
+					"hour": "12h00",
+					"type": "FullWipe"
+				}
+			],
+			"group_limit": "0",
+			"ip": "45.88.230.93:28014",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13744721"
+		},
+		{
+			"name": "Survivors.gg [ 2x Solo/Duo/Trio ]",
+			"wipes":
+			[
+				{
+					"day": "Dimanche",
+					"hour": "15h00",
+					"type": "MapWipe, FullWipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "3",
+			"ip": "64.52.81.234:28014",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13728671"
+		}
+	]
+}
