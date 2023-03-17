@@ -1,5 +1,5 @@
 # botdevilkitty
-Bot pour le serveur Discord DevilKitty
+Bot créé pour le serveur Discord DevilKitty. Ce bot permet de se renseigner sur les prochains wipes des serveurs Rust "Survivors.gg" et de les organiser entre les membres du serveur Discord.
 
 ## Configuration du Bot
 
