@@ -89,7 +89,7 @@ module.exports = {
 	
 					// Ajoute la réponse de l'utilisateur à la map 'usersResponse'
 					collector.on('collect', response => {
-						console.log(user + ' a indiqué l\'heure de début de jeu : ' + userResponse + ' pour le wipe du ' + wipeDate);
+						console.log(user.username + ' a indiqué comme heure de début de jeu ' + response.content + ' pour le wipe du ' + wipeDate);
 						usersResponse.set(user.username, response.content);
 						collector.stop();
 					});
@@ -154,6 +154,9 @@ module.exports = {
 			autoArchiveDuration: 60,
 			reason: `Planification du wipe du ${wipeDate}`,
 		});
+
+		// Modification de la durée d'archivage automatique du fil de discussion (10 080 minutes = 7 jours)
+		thread.setAutoArchiveDuration(10080);
 
 		// Récupération des infos du serveur
 		let rawdata = fs.readFileSync('wipes.json');

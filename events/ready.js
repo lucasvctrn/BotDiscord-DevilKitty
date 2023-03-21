@@ -116,11 +116,13 @@ module.exports = {
 						if(usersYes.includes(user))
 						{
 							const userResponse = line.split(' - ')[1];
-							console.log(user + ' a indiqué l\'heure de début de jeu : ' + userResponse);
+							console.log(user + ' a indiqué comme heure de début de jeu ' + userResponse);
 							usersResponse.set(user, userResponse);
 						}
 					}
 				};
+
+				updateMess();
 
 				const filter = (reaction, user) => {
 					return ['✅', '❓', '❌'].includes(reaction.emoji.name) && !user.bot;
@@ -205,32 +207,32 @@ module.exports = {
 						usersNo.push(user.username);
 						updateMess();
 					}
-		
-					// Met à jour le messagePlanif
-					function updateMess() {
-						let new_content = `------------------------------------------\n**${wipeDate}**`;
-			
-						if (usersYes.length > 0) {
-							usersYes.sort((a, b) => {
-								if (usersResponse.get(a) === '?') return 1;
-								if (usersResponse.get(b) === '?') return -1;
-								return usersResponse.get(a) > usersResponse.get(b) ? 1 : -1;
-							});
-
-							new_content += `\n\n✅ ${usersYes.map(user => `${user} - ${usersResponse.get(user)}`).join('\n✅ ')}`;
-						}
-			
-						if (usersNotSure.length > 0) {
-							new_content += `\n\n❓ ${usersNotSure.join('\n❓ ')}`;
-						}
-			
-						if (usersNo.length > 0) {
-							new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
-						}
-			
-						messagePlanif.edit({ content: new_content });
-					}
 				});
+		
+				// Met à jour le messagePlanif
+				function updateMess() {
+					let new_content = `------------------------------------------\n**${wipeDate}**`;
+		
+					if (usersYes.length > 0) {
+						usersYes.sort((a, b) => {
+							if (usersResponse.get(a) === '?') return 1;
+							if (usersResponse.get(b) === '?') return -1;
+							return usersResponse.get(a) > usersResponse.get(b) ? 1 : -1;
+						});
+
+						new_content += `\n\n✅ ${usersYes.map(user => `${user} - ${usersResponse.get(user) == undefined ? "?" : usersResponse.get(user) }`).join('\n✅ ')}`;
+					}
+		
+					if (usersNotSure.length > 0) {
+						new_content += `\n\n❓ ${usersNotSure.join('\n❓ ')}`;
+					}
+		
+					if (usersNo.length > 0) {
+						new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
+					}
+		
+					messagePlanif.edit({ content: new_content });
+				}
 			};
 		}
 	},
