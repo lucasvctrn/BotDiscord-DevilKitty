@@ -5,8 +5,8 @@ module.exports = {
 	once: true,
 	async execute(client) {
 
-		// On envoi un messagePlanif dans la console pour indiquer que le bot est prêt
-		console.log('\nLe bot est prêt ! Connecté en tant que ' + client.user.tag + ' !\n');
+		// On envoi un messagePlanif dans la console pour indiquer que le bot est en préparation
+		console.log('Préparation du bot...\n');
 
 		// On récupère le salon "attribution-roles" et on cherche si un messageAttRole a déjà été envoyé dans le salon
 		let channelAttRoleName = 'attribution-roles', messageAttRole;
@@ -15,18 +15,19 @@ module.exports = {
 
 		// Si un messageAttRole a déjà été envoyé, on ne crée pas de nouveau messageAttRole mais on récupère le premier messageAttRole du salon "attribution-roles"
 		if (messagesAttRole.size > 0) {
-			console.log('Un message a déjà été envoyé dans le salon "attribution-roles", récupération du message...\n');
+			console.log('Un message a déjà été envoyé dans le salon "attribution-roles", récupération du message...');
 			messageAttRole = messagesAttRole.first();
 			collectUserReactions();
 		}
 		// Sinon, on envoie un nouveau messageAttRole dans le salon "attribution-roles"
 		else {
-			console.log('Aucun message n\'a été envoyé dans le salon "attribution-roles", envoi d\'un nouveau message...\n');
+			console.log('Aucun message n\'a été envoyé dans le salon "attribution-roles", envoi d\'un nouveau message...');
 			messageAttRole = await channelAttRole.send({content: '**Réagis à ce messageAttRole** pour t\'attribuer des rôles et accéder aux salons réservés !\n\n🗿 : rejoins la Team DK sur Rust avec cet emoji de chad.\n🚿 : rejoins la Team Transpi sur LoL avec cet emoji odieux.', fetchReply: true });
 			// On ajoute les réactions au messageAttRole
 			messageAttRole.react('🗿').then(() => messageAttRole.react('🚿')).then(() => {
 				collectUserReactions();
 			});
+			console.log('Message envoyé !\n');
 		}
 	
 		function collectUserReactions() {
@@ -53,22 +54,23 @@ module.exports = {
 					member.roles.add(role);
 				}
 			});
+			console.log('Message récupéré !\n');
 		};
 
 		// On récupère le salon "planifs-wipes" et on cherche si des messages de planifs ont déjà été envoyés dans le salon
-		let channelPlanifName = 'planifs-wipes';
-		const channelPlanif = client.channels.cache.find(channelPlanif => channelPlanif.name === channelPlanifName);
-		const messagesPlanif = await channelPlanif.messages.fetch();
+		let channelPlanifWipesName = 'planifs-wipes';
+		const channelPlanifWipes = client.channels.cache.find(channelPlanifWipes => channelPlanifWipes.name === channelPlanifWipesName);
+		const messagesPlanifWipes = await channelPlanifWipes.messages.fetch();
 
 		// Si des messages de planifs ont déjà été envoyés, on créé un collecteur pour chaque message pour récupérer les réactions des utilisateurs
-		if (messagesPlanif.size > 0) {
-			console.log('Des messages de planifs ont déjà été envoyés dans le salon "planifs-wipes", récupération des messages...');
-			for(const messagePlanif of messagesPlanif.values()) {
-				if(messagePlanif.content === undefined) return;
+		if (messagesPlanifWipes.size > 0) {
+			console.log('Des messages de planifs de wipes ont déjà été envoyés dans le salon "planifs-wipes", récupération des messages...');
+			for(const messagePlanif of messagesPlanifWipes.values()) {
+				// Si le message est vide, on passe au message suivant
+				if(messagePlanif.content === undefined) continue;
+				
 				// Si la première ligne du message est "__**Prochains wipes**__", on passe au message suivant
-				if (messagePlanif.content.startsWith('__**Prochains wipes**__')) {
-					return;
-				}
+				if (messagePlanif.content.startsWith('__**Prochains wipes**__')) continue;
 
 				// Liste des utilisateurs qui sont en train de répondre à l'heure de début de jeu
 				let usersProcessingYes = [];
@@ -234,6 +236,123 @@ module.exports = {
 					messagePlanif.edit({ content: new_content });
 				}
 			};
+			console.log('\nFin de la récupération des messages de planifs de wipes !\n');
 		}
+
+		// On récupère le salon "planifs-tournages" et on cherche si des messages de planifs ont déjà été envoyés dans le salon
+		let channelPlanifShootingName = 'planifs-tournages';
+		const channelPlanifShooting = client.channels.cache.find(channelPlanifShooting => channelPlanifShooting.name === channelPlanifShootingName);
+		const messagesPlanifShooting = await channelPlanifShooting.messages.fetch();
+
+		// Si des messages de planifs ont déjà été envoyés, on créé un collecteur pour chaque message pour récupérer les réactions des utilisateurs
+		if (messagesPlanifShooting.size > 0) {
+			console.log('Des messages de planifs de tournages ont déjà été envoyés dans le salon "planifs-tournages", récupération des messages...');
+			for(const messagePlanif of messagesPlanifShooting.values()) {
+				// Si le message est vide, on passe au message suivant
+				if(messagePlanif.content === undefined) continue;
+				
+				// Si la première ligne du message est "__**Prochains tournages**__", on passe au message suivant
+				if (messagePlanif.content.startsWith('__**Prochains tournages**__')) continue;
+
+				// Listes des utilisateurs qui ont réagi avec les emojis
+				let usersYes = [];
+				let usersNotSure = [];
+				let usersNo = [];
+
+				// On lit le messagePlanif pour récupérer la date de tournage et on supprime les '**'
+				const messageContent = messagePlanif.content;
+				const messageContentSplit = messageContent.split('\n');
+				const shootingDate = messageContentSplit[1].slice(2, messageContentSplit[1].length - 2);
+				console.log('\n★ Date de tournage : ' + shootingDate);
+
+				// On récupère les utilisateurs qui ont réagi avec les emojis et on les ajoute dans les listes correspondantes
+				for(const reaction of messagePlanif.reactions.cache.values()) {
+					const users = await reaction.users.fetch();
+					for(const user of users.values()) {
+						if (!user.bot) {
+							if (reaction.emoji.name === '✅') {
+								console.log(user.username + ' a réagi avec l\'emoji ✅');
+								usersYes.push(user.username);
+							}
+							else if (reaction.emoji.name === '❓') {
+								console.log(user.username + ' a réagi avec l\'emoji ❓');
+								usersNotSure.push(user.username);
+							}
+							else if (reaction.emoji.name === '❌') {
+								console.log(user.username + ' a réagi avec l\'emoji ❌');
+								usersNo.push(user.username);
+							}
+						}
+					};
+				};
+
+				updateMess();
+
+				const filter = (reaction, user) => {
+					return ['✅', '❓', '❌'].includes(reaction.emoji.name) && !user.bot;
+				};
+		
+				const collector = messagePlanif.createReactionCollector(filter);
+		
+				collector.on('collect', async (reaction, user) => {
+					// Récupère toutes les réactions de l'utilisateur
+					const userReactions = messagePlanif.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
+		
+					// Supprime toutes les réactions de l'utilisateur sauf celle qu'il vient de faire
+					for (const react of userReactions.values()) {
+						if (reaction.emoji.name !== react.emoji.name) {
+							await react.users.remove(user.id);
+						}
+					}
+		
+					// Supprime le nom de l'utilisateur des liste de réactions
+					if (usersYes.includes(user.username)) usersYes.splice(usersYes.indexOf(user.username), 1);
+					if (usersNotSure.includes(user.username)) usersNotSure.splice(usersNotSure.indexOf(user.username), 1);
+					if (usersNo.includes(user.username)) usersNo.splice(usersNo.indexOf(user.username), 1);
+		
+					// Ajoute le nom de l'utilisateur à la liste de réactions '✅'
+					if (reaction.emoji.name === '✅') {
+						console.log(user.username + ' a réagi avec l\'emoji ✅ pour le tournage du ' + shootingDate);
+						usersYes.push(user.username);
+						updateMess();
+					} 
+					
+					// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
+					else if (reaction.emoji.name === '❓') {
+						console.log(user.username + ' a réagi avec l\'emoji ❓ pour le tournage du ' + shootingDate)
+						usersNotSure.push(user.username);
+						updateMess();
+					} 
+					
+					// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
+					else if (reaction.emoji.name === '❌') {
+						console.log(user.username + ' a réagi avec l\'emoji ❌ pour le tournage du ' + shootingDate)
+						usersNo.push(user.username);
+						updateMess();
+					}
+				});
+		
+				// Met à jour le messagePlanif
+				function updateMess() {
+					let new_content = `------------------------------------------\n**${shootingDate}**`;
+		
+					if (usersYes.length > 0) {
+						new_content += `\n\n✅ ${usersYes.join('\n✅ ')}`;
+					}
+		
+					if (usersNotSure.length > 0) {
+						new_content += `\n\n❓ ${usersNotSure.join('\n❓ ')}`;
+					}
+		
+					if (usersNo.length > 0) {
+						new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
+					}
+		
+					messagePlanif.edit({ content: new_content });
+				}
+			};
+			console.log('\nFin de la récupération des messages de planifs de tournages !\n');
+		}
+		console.log('\nLe bot est prêt ! Connecté en tant que ' + client.user.tag + ' !\n');
 	},
 };
