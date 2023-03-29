@@ -8,57 +8,8 @@ module.exports = {
 		// On envoi un messagePlanif dans la console pour indiquer que le bot est en préparation
 		console.log('Préparation du bot...\n');
 
-		// On récupère le salon "attribution-roles" et on cherche si un message a déjà été envoyé dans le salon
-		let channelAttRoleName = 'attribution-roles', messageAttRole;
-		const channelAttRole = client.channels.cache.find(channelAttRole => channelAttRole.name === channelAttRoleName);
-		const messagesAttRole = await channelAttRole.messages.fetch();
-
-		// Si un message a déjà été envoyé, on ne crée pas de nouveau message mais on récupère le premier message du salon "attribution-roles"
-		if (messagesAttRole.size > 0) {
-			console.log('Un message a déjà été envoyé dans le salon "attribution-roles", récupération du message...');
-			messageAttRole = messagesAttRole.first();
-			collectAttRoleUserReactions();
-		}
-		// Sinon, on envoie un nouveau message dans le salon "attribution-roles"
-		else {
-			console.log('Aucun message n\'a été envoyé dans le salon "attribution-roles", envoi d\'un nouveau message...');
-			messageAttRole = await channelAttRole.send({content: '**Réagis à ce messageAttRole** pour t\'attribuer des rôles et accéder aux salons réservés !\n\n🗿 : rejoins la Team DK sur Rust avec cet emoji de chad.\n🚿 : rejoins la Team Transpi sur LoL avec cet emoji odieux.', fetchReply: true });
-			// On ajoute les réactions au messageAttRole
-			messageAttRole.react('🗿').then(() => messageAttRole.react('🚿')).then(() => {
-				collectAttRoleUserReactions();
-			});
-			console.log('Message envoyé !\n');
-		}
-	
-		function collectAttRoleUserReactions() {
-			const filter = (reaction, user) => {
-				return ['🗿', '🚿'].includes(reaction.emoji.name) && !user.bot;
-			};
-	
-			// On crée un collecteur qui récupère les réactions des utilisateurs
-			const collector = messageAttRole.createReactionCollector(filter);
-	
-			collector.on('collect', (reaction, user) => {
-				// Si l'utilisateur a réagi avec l'émote 🗿, on lui attribue le rôle "Team DK"
-				if (reaction.emoji.name === '🗿') {
-					console.log('L\'utilisateur ' + user.username + ' a réagi avec l\'émote 🗿, attribution du rôle "Team DK"...')
-					const role = messageAttRole.guild.roles.cache.find(role => role.name === 'Team DK');
-					const member = messageAttRole.guild.members.cache.find(member => member.id === user.id);
-					member.roles.add(role);
-				}
-				// Si l'utilisateur a réagi avec l'émote 🚿, on lui attribue le rôle "Team Transpi"
-				else if (reaction.emoji.name === '🚿') {
-					console.log('L\'utilisateur ' + user.username + ' a réagi avec l\'émote 🚿, attribution du rôle "Team Transpi"...')
-					const role = messageAttRole.guild.roles.cache.find(role => role.name === 'Team Transpi');
-					const member = messageAttRole.guild.members.cache.find(member => member.id === user.id);
-					member.roles.add(role);
-				}
-			});
-			console.log('Message récupéré !\n');
-		};
-
 		// On récupère le salon "planifs-wipes" et on cherche si des messages de planifs ont déjà été envoyés dans le salon
-		let channelPlanifWipesName = 'planifs-wipes';
+		let channelPlanifWipesName = '📍planifs-wipes';
 		const channelPlanifWipes = client.channels.cache.find(channelPlanifWipes => channelPlanifWipes.name === channelPlanifWipesName);
 		const messagesPlanifWipes = await channelPlanifWipes.messages.fetch();
 
@@ -240,7 +191,7 @@ module.exports = {
 		}
 
 		// On récupère le salon "planifs-tournages" et on cherche si des messages de planifs ont déjà été envoyés dans le salon
-		let channelPlanifShootingName = 'planifs-tournages';
+		let channelPlanifShootingName = '🎥planifs-tournages';
 		const channelPlanifShooting = client.channels.cache.find(channelPlanifShooting => channelPlanifShooting.name === channelPlanifShootingName);
 		const messagesPlanifShooting = await channelPlanifShooting.messages.fetch();
 
