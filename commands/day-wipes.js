@@ -13,8 +13,16 @@ module.exports = {
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /day-wipes');
-		const wipeDay = interaction.options.getString('day').toLowerCase();
 
+		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "Team DK"
+		if (!interaction.member.roles.cache.some(role => role.name === 'Team DK')) 
+		{
+			// Si l'utilisateur n'est pas membre du rôle "Team DK", on envoie un message d'erreur
+			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle Team DK)');
+			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
+		}
+
+		const wipeDay = interaction.options.getString('day').toLowerCase();
 		// Récupération des serveurs qui wipent le jour saisi
 		let rawdata = fs.readFileSync('wipes.json');
 		let servers = (JSON.parse(rawdata)).servers;
