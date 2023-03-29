@@ -8,29 +8,29 @@ module.exports = {
 		// On envoi un messagePlanif dans la console pour indiquer que le bot est en préparation
 		console.log('Préparation du bot...\n');
 
-		// On récupère le salon "attribution-roles" et on cherche si un messageAttRole a déjà été envoyé dans le salon
+		// On récupère le salon "attribution-roles" et on cherche si un message a déjà été envoyé dans le salon
 		let channelAttRoleName = 'attribution-roles', messageAttRole;
 		const channelAttRole = client.channels.cache.find(channelAttRole => channelAttRole.name === channelAttRoleName);
 		const messagesAttRole = await channelAttRole.messages.fetch();
 
-		// Si un messageAttRole a déjà été envoyé, on ne crée pas de nouveau messageAttRole mais on récupère le premier messageAttRole du salon "attribution-roles"
+		// Si un message a déjà été envoyé, on ne crée pas de nouveau message mais on récupère le premier message du salon "attribution-roles"
 		if (messagesAttRole.size > 0) {
 			console.log('Un message a déjà été envoyé dans le salon "attribution-roles", récupération du message...');
 			messageAttRole = messagesAttRole.first();
-			collectUserReactions();
+			collectAttRoleUserReactions();
 		}
-		// Sinon, on envoie un nouveau messageAttRole dans le salon "attribution-roles"
+		// Sinon, on envoie un nouveau message dans le salon "attribution-roles"
 		else {
 			console.log('Aucun message n\'a été envoyé dans le salon "attribution-roles", envoi d\'un nouveau message...');
 			messageAttRole = await channelAttRole.send({content: '**Réagis à ce messageAttRole** pour t\'attribuer des rôles et accéder aux salons réservés !\n\n🗿 : rejoins la Team DK sur Rust avec cet emoji de chad.\n🚿 : rejoins la Team Transpi sur LoL avec cet emoji odieux.', fetchReply: true });
 			// On ajoute les réactions au messageAttRole
 			messageAttRole.react('🗿').then(() => messageAttRole.react('🚿')).then(() => {
-				collectUserReactions();
+				collectAttRoleUserReactions();
 			});
 			console.log('Message envoyé !\n');
 		}
 	
-		function collectUserReactions() {
+		function collectAttRoleUserReactions() {
 			const filter = (reaction, user) => {
 				return ['🗿', '🚿'].includes(reaction.emoji.name) && !user.bot;
 			};
