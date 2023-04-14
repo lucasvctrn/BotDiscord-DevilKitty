@@ -46,7 +46,7 @@ module.exports = {
 			for(let wipe of server.wipes) {
 				if (wipe.day.toLowerCase() === wipeDay) {
 					string += `\n★ ${wipe.day} à ${wipe.hour}`;
-					string += `\n★ ${wipe.type === "FullWipe" ? "FullWipe" : `${wipe.type}, à vérifier ici : https://survivors.gg/#wipe` }`;
+					string += `\n★ ${wipe.type === "FullWipe" ? "FullWipe" : `${wipe.type} (planning : https://survivors.gg/#wipe)` }`;
 				};
 			}
 			string += `\n★ ${server.group_limit == 0 ? "No Group Limit" : `Group Limit ${server.group_limit}`}`;
