@@ -7,12 +7,12 @@
 				{
 					"day": "Lundi",
 					"hour": "14h00",
-					"type": "FullWipe"
+					"type": "Fullwipe"
 				},
 				{
 					"day": "Jeudi",
 					"hour": "14h00",
-					"type": "FullWipe"
+					"type": "Fullwipe"
 				}
 			],
 			"group_limit": "4",
@@ -26,7 +26,7 @@
 				{
 					"day": "Lundi",
 					"hour": "16h00",
-					"type": "MapWipe, FullWipe toutes les deux semaines"
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
 				}
 			],
 			"group_limit": "10",
@@ -40,12 +40,12 @@
 				{
 					"day": "Mardi",
 					"hour": "14h00",
-					"type": "FullWipe"
+					"type": "Fullwipe"
 				},
 				{
 					"day": "Vendredi",
 					"hour": "16h00",
-					"type": "MapWipe, pas de wipe le vendredi après la MàJ"
+					"type": "Mapwipe, pas de wipe le vendredi après la MàJ"
 				}
 			],
 			"group_limit": "2",
@@ -59,7 +59,7 @@
 				{
 					"day": "Mardi",
 					"hour": "16h00",
-					"type": "MapWipe, FullWipe toutes les deux semaines"
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
 				}
 			],
 			"group_limit": "8",
@@ -73,7 +73,7 @@
 				{
 					"day": "Mercredi",
 					"hour": "14h00",
-					"type": "MapWipe, FullWipe toutes les deux semaines"
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
 				}
 			],
 			"group_limit": "3",
@@ -87,12 +87,31 @@
 				{
 					"day": "Mercredi",
 					"hour": "16h00",
-					"type": "MapWipe, FullWipe toutes les deux semaines"
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
 				}
 			],
 			"group_limit": "0",
 			"ip": "45.88.230.93:28024",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13065465"
+		},
+		{
+			"name": "Survivors.gg  [ 3x Vanilla ]",
+			"wipes":
+			[
+				{
+					"day": "Mercredi",
+					"hour": "18h00",
+					"type": "Mapwipe"
+				},
+				{
+					"day": "Samedi",
+					"hour": "16h00",
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
+				}
+			],
+			"group_limit": "5",
+			"ip": "64.52.81.125:28024",
+			"battlemetrics": "https://www.battlemetrics.com/servers/rust/20290692"
 		},
 		{
 			"name": "Survivors.gg Large [ 2x Vanilla ]",
@@ -101,7 +120,7 @@
 				{
 					"day": "Jeudi",
 					"hour": "16h00",
-					"type": "FullWipe"
+					"type": "Fullwipe"
 				}
 			],
 			"group_limit": "8",
@@ -115,7 +134,7 @@
 				{
 					"day": "Vendredi",
 					"hour": "14h00",
-					"type": "FullWipe"
+					"type": "Fullwipe"
 				}
 			],
 			"group_limit": "3",
@@ -129,7 +148,7 @@
 				{
 					"day": "Vendredi",
 					"hour": "18h00",
-					"type": "MapWipe, FullWipe tous les mois vendredi après la MàJ"
+					"type": "Mapwipe, Fullwipe tous les mois après la MàJ"
 				}
 			],
 			"group_limit": "0",
@@ -143,7 +162,7 @@
 				{
 					"day": "Samedi",
 					"hour": "12h00",
-					"type": "MapWipe, FullWipe toutes les deux semaines"
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
 				}
 			],
 			"group_limit": "8",
@@ -157,7 +176,7 @@
 				{
 					"day": "Samedi",
 					"hour": "15h00",
-					"type": "MapWipe, FullWipe toutes les deux semaines"
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
 				}
 			],
 			"group_limit": "4",
@@ -171,7 +190,7 @@
 				{
 					"day": "Dimanche",
 					"hour": "12h00",
-					"type": "FullWipe"
+					"type": "Fullwipe"
 				}
 			],
 			"group_limit": "0",
@@ -185,7 +204,7 @@
 				{
 					"day": "Dimanche",
 					"hour": "15h00",
-					"type": "MapWipe, FullWipe toutes les deux semaines"
+					"type": "Mapwipe, Fullwipe toutes les deux semaines"
 				}
 			],
 			"group_limit": "3",
