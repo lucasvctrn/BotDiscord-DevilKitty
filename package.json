@@ -1,6 +1,6 @@
 {
   "name": "botdevilkitty",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "Bot discord pour le serveur DevilKitty",
   "main": "index.js",
   "scripts": {
