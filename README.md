@@ -9,5 +9,5 @@ Modifier le fichier config.json à la racine du projet pour ajouter les informat
 ## Lancement du Bot
 
 Ouvrir un cmd à la racine.<br />
-Lancer la commande "node index.js".<br />
+Lancer la commande "npm install" puis la commande "node index.js".<br />
 Le bot est lancé ! Un message de confirmation devrait s'afficher dans la console.
