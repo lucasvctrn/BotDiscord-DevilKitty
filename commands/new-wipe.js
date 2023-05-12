@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
 
 module.exports = {
@@ -14,10 +14,19 @@ module.exports = {
 						.setDescription('Mettre oui pour sélectionner un serveur avec un petit group-limit')
 						.setRequired(false))
 		.setDMPermission(false)
-		.setDefaultMemberPermissions(0),
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /new-wipe');
+
+		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "⚜️ Team DK ⚜️"
+		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️')) 
+		{
+			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️", on envoie un message d'erreur
+			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️)');
+			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
+		}
+
 		// Liste des utilisateurs qui sont en train de répondre à l'heure de début de jeu
 		let usersProcessingYes = [];
 
@@ -186,7 +195,7 @@ module.exports = {
 		if(selectedServer) {
 			let wipeType = selectedServer.wipes.find(wipe => wipe.day === wipeDay).type;
 			let groupLimit = selectedServer.group_limit == 0 ? "No Group Limit" : `Group Limit ${selectedServer.group_limit}`;
-			const teamDKRole = message.guild.roles.cache.find(role => role.name === 'Team DK');
+			const teamDKRole = message.guild.roles.cache.find(role => role.name === '⚜️ Team DK ⚜️');
 			thread.send(`<@&${teamDKRole.id}> Voici le fil dédié au wipe du ${wipeDate} avec les informations du serveur.\n\n**${selectedServer.name}**\n★ ${wipeType === "FullWipe" ? wipeType : `${wipeType} (planning : https://survivors.gg/#wipe)` }\n★ ${groupLimit}\n★ connect ${selectedServer.ip}\n★ ${selectedServer.battlemetrics}`);
 		}
 	},

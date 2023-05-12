@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -20,7 +20,8 @@ module.exports = {
 			option.setName('optionb')
 						.setDescription('Option B du vote')
 						.setRequired(false))
-		.setDMPermission(false),
+		.setDMPermission(false)
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /vote');

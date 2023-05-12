@@ -7,7 +7,7 @@
 				{
 					"day": "Lundi",
 					"hour": "14h00",
-					"type": "Fullwipe"
+					"type": "MapWipe"
 				},
 				{
 					"day": "Jeudi",
@@ -45,7 +45,7 @@
 				{
 					"day": "Vendredi",
 					"hour": "16h00",
-					"type": "Mapwipe, pas de wipe le vendredi après la MàJ"
+					"type": "Mapwipe (pas de wipe le vendredi après la MàJ)"
 				}
 			],
 			"group_limit": "2",
@@ -95,25 +95,6 @@
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13065465"
 		},
 		{
-			"name": "Survivors.gg  [ 3x Vanilla ]",
-			"wipes":
-			[
-				{
-					"day": "Mercredi",
-					"hour": "18h00",
-					"type": "Mapwipe"
-				},
-				{
-					"day": "Samedi",
-					"hour": "16h00",
-					"type": "Mapwipe, Fullwipe toutes les deux semaines"
-				}
-			],
-			"group_limit": "5",
-			"ip": "64.52.81.125:28024",
-			"battlemetrics": "https://www.battlemetrics.com/servers/rust/20290692"
-		},
-		{
 			"name": "Survivors.gg Large [ 2x Vanilla ]",
 			"wipes":
 			[
@@ -148,7 +129,7 @@
 				{
 					"day": "Vendredi",
 					"hour": "18h00",
-					"type": "Mapwipe, Fullwipe tous les mois après la MàJ"
+					"type": "Mapwipe, Fullwipe tous les mois"
 				}
 			],
 			"group_limit": "0",

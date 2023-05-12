@@ -1,24 +1,25 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('day-wipes')
+		.setDescription('Liste les wipes qui ont lieu à une journée donnée')
 		.addStringOption(option => 
 			option.setName('day')
 						.setDescription('Journée du wipe (ex: lundi, mardi, ...)')
 						.setRequired(true))
-		.setDescription('Liste les wipes qui ont lieu à une journée donnée')
-		.setDMPermission(false),
+		.setDMPermission(false)
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /day-wipes');
 
-		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "Team DK"
-		if (!interaction.member.roles.cache.some(role => role.name === 'Team DK')) 
+		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "⚜️ Team DK ⚜️"
+		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️')) 
 		{
-			// Si l'utilisateur n'est pas membre du rôle "Team DK", on envoie un message d'erreur
-			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle Team DK)');
+			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️", on envoie un message d'erreur
+			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️)');
 			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
 		}
 

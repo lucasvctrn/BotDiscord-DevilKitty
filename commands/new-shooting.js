@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
 
 module.exports = {
@@ -10,10 +10,18 @@ module.exports = {
 						.setDescription('Date du tournage')
 						.setRequired(true))
 		.setDMPermission(false)
-		.setDefaultMemberPermissions(0),
+		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /new-shooting');
+
+		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "⚜️ Team DK ⚜️"
+		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️')) 
+		{
+			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️", on envoie un message d'erreur
+			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️)');
+			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
+		}
 
 		// Listes des utilisateurs qui ont réagi avec les emojis
 		let usersYes = [];
@@ -84,7 +92,7 @@ module.exports = {
 					if (usersNo.length > 0) {
 						new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
 					}
-		
+					
 					message.edit({ content: new_content });
 				}
 			});
@@ -102,7 +110,7 @@ module.exports = {
 
 		// Envoie les infos du serveur dans le fil de discussion
 		let serverIp = "play.clanpains.fr:25051";
-		const teamDKRole = message.guild.roles.cache.find(role => role.name === 'Team DK');
+		const teamDKRole = message.guild.roles.cache.find(role => role.name === '⚜️ Team DK ⚜️');
 		thread.send(`<@&${teamDKRole.id}> Voici le fil dédié au tournage du ${shootingDate}.\n\n★ Commande pour se connecter au serveur privé : \`\`\`connect ${serverIp}\`\`\``);
 	},
 };
