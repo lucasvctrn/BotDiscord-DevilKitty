@@ -51,43 +51,45 @@ module.exports = {
 		const optiond = interaction.options.getString('optiond');
 		const optione = interaction.options.getString('optione');
 
-		console.log(`★ Question : ${question}`)
+		console.log(`Question : ${question}`)
 
 		if(options) {
-			console.log('★ Vote avec options')
-
 			// Création du message avec mention du rôle si il est renseigné
 			let messageContent = role != null ? `@${role} Nouveau vote !\n\n**${question}**\n` : `Nouveau vote !\n\n**${question}**\n`;
 
 			// Ajout des options au message
 			if(optiona != null && optionb != null && optionc == null) {
+				console.log('Vote avec options A et B : \"' + optiona + '\" et \"' + optionb + '\"');
 				messageContent += `★ A - ${optiona}\n★ B - ${optionb}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧'));
 			}
 			else if(optiona != null && optionb != null && optionc != null && optiond == null) {
+				console.log('Vote avec options A, B et C : \"' + optiona + '\", \"' + optionb + '\" et \"' + optionc + '\"');
 				messageContent += `★ A - ${optiona}\n★ B - ${optionb}\n★ C - ${optionc}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧').then(() => message.react('🇨')));
 			}
 			else if(optiona != null && optionb != null && optionc != null && optiond != null && optione == null) {
+				console.log('Vote avec options A, B, C et D : \"' + optiona + '\", \"' + optionb + '\", \"' + optionc + '\" et \"' + optiond + '\"');
 				messageContent += `★ A - ${optiona}\n★ B - ${optionb}\n★ C - ${optionc}\n★ D - ${optiond}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧').then(() => message.react('🇨').then(() => message.react('🇩'))));
 			}
 			else if(optiona != null && optionb != null && optionc != null && optiond != null && optione != null) {
+				console.log('Vote avec options A, B, C, D et E : \"' + optiona + '\", \"' + optionb + '\", \"' + optionc + '\", \"' + optiond + '\" et \"' + optione + '\"');
 				messageContent += `★ A - ${optiona}\n★ B - ${optionb}\n★ C - ${optionc}\n★ D - ${optiond}\n★ E - ${optione}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧').then(() => message.react('🇨').then(() => message.react('🇩').then(() => message.react('🇪')))));
 			}
 			else {
 				// Retourne une erreur à l'utilisateur si il n'a pas renseigné au moins deux options
-				console.log('★ Commande annulée : l\'utilisateur n\'a pas renseigné au moins deux options.')
+				console.log('Commande annulée : l\'utilisateur n\'a pas renseigné au moins deux options.')
 				return interaction.reply({ content: 'Erreur : Vous devez renseigner au moins deux options.', ephemeral: true });
 			}
 		}
 		else {
-			console.log('★ Vote sans options')
+			console.log('Vote sans options')
 			// Création du message avec mention du rôle si il est renseigné
 			let messageContent = role != null ? `@${role} Nouveau vote !\n\n**${question}**` : `Nouveau vote !\n\n**${question}**`;
 			const message = await interaction.reply({ content: `**${question}**`, fetchReply: true });
