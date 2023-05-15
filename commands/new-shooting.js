@@ -29,7 +29,7 @@ module.exports = {
 		let usersNo = [];
 
 		const shootingDate = interaction.options.getString('date');
-		const message = await interaction.reply({ content: `------------------------------------------\n**${shootingDate}**`, fetchReply: true });
+		const message = await interaction.reply({ content: `**${shootingDate}**`, fetchReply: true });
 
 		console.log('\n★ Nouveau tournage prévu le : ' + shootingDate);
 
@@ -79,7 +79,7 @@ module.exports = {
 	
 				// Met à jour le message
 				function updateMess() {
-					let new_content = `------------------------------------------\n**${shootingDate}**`;
+					let new_content = `**${shootingDate}**`;
 		
 					if (usersYes.length > 0) {
 						new_content += `\n\n✅ ${usersYes.join('\n✅ ')}`;

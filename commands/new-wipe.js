@@ -41,7 +41,7 @@ module.exports = {
 		const wipeDate = interaction.options.getString('date');
 		const wipeDay = interaction.options.getString('date').split(' ')[0];
 		const littleGroupLimit = interaction.options.getBoolean('little-grouplimit');
-		const message = await interaction.reply({ content: `------------------------------------------\n**${wipeDate}**`, fetchReply: true });
+		const message = await interaction.reply({ content: `**${wipeDate}**`, fetchReply: true });
 
 		console.log('\n★ Nouveau wipe prévu le : ' + wipeDate);
 
@@ -132,7 +132,7 @@ module.exports = {
 	
 				// Met à jour le message
 				function updateMess() {
-					let new_content = `------------------------------------------\n**${wipeDate}**`;
+					let new_content = `**${wipeDate}**`;
 		
 					if (usersYes.length > 0) {
 						usersYes.sort((a, b) => {

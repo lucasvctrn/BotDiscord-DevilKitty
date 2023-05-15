@@ -164,7 +164,7 @@ module.exports = {
 		
 				// Met à jour le messagePlanif
 				function updateMess() {
-					let new_content = `------------------------------------------\n**${wipeDate}**`;
+					let new_content = `**${wipeDate}**`;
 		
 					if (usersYes.length > 0) {
 						usersYes.sort((a, b) => {
@@ -285,7 +285,7 @@ module.exports = {
 		
 				// Met à jour le messagePlanif
 				function updateMess() {
-					let new_content = `------------------------------------------\n**${shootingDate}**`;
+					let new_content = `**${shootingDate}**`;
 		
 					if (usersYes.length > 0) {
 						new_content += `\n\n✅ ${usersYes.join('\n✅ ')}`;
