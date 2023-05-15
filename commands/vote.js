@@ -8,6 +8,10 @@ module.exports = {
 			option.setName('question')
 						.setDescription('Question du vote')
 						.setRequired(true))
+		.addRoleOption(option =>
+			option.setName('role')
+						.setDescription('Rôle à mentionner')
+						.setRequired(false))
 		.addBooleanOption(option =>
 			option.setName('options')
 						.setDescription('Propose une liste d\'options au lieu de oui ou non')
@@ -39,6 +43,7 @@ module.exports = {
 		console.log('\n★ Commande appelée : /vote');
 
 		const question = interaction.options.getString('question');
+		const role = interaction.options.getRole('role');
 		const options = interaction.options.getBoolean('options');
 		const optiona = interaction.options.getString('optiona');
 		const optionb = interaction.options.getString('optionb');
@@ -46,8 +51,15 @@ module.exports = {
 		const optiond = interaction.options.getString('optiond');
 		const optione = interaction.options.getString('optione');
 
+		console.log(`★ Question : ${question}`)
+
 		if(options) {
-			let messageContent = `**${question}**\n`;
+			console.log('★ Vote avec options')
+
+			// Création du message avec mention du rôle si il est renseigné
+			let messageContent = role != null ? `@${role} Nouveau vote !\n\n**${question}**\n` : `Nouveau vote !\n\n**${question}**\n`;
+
+			// Ajout des options au message
 			if(optiona != null && optionb != null && optionc == null) {
 				messageContent += `★ A - ${optiona}\n★ B - ${optionb}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
@@ -70,10 +82,14 @@ module.exports = {
 			}
 			else {
 				// Retourne une erreur à l'utilisateur si il n'a pas renseigné au moins deux options
+				console.log('★ Commande annulée : l\'utilisateur n\'a pas renseigné au moins deux options.')
 				return interaction.reply({ content: 'Erreur : Vous devez renseigner au moins deux options.', ephemeral: true });
 			}
 		}
 		else {
+			console.log('★ Vote sans options')
+			// Création du message avec mention du rôle si il est renseigné
+			let messageContent = role != null ? `@${role} Nouveau vote !\n\n**${question}**` : `Nouveau vote !\n\n**${question}**`;
 			const message = await interaction.reply({ content: `**${question}**`, fetchReply: true });
 			message.react('✅').then(() => message.react('❌'));
 		}
