@@ -92,7 +92,7 @@ module.exports = {
 			console.log('Vote sans options')
 			// Création du message avec mention du rôle si il est renseigné
 			let messageContent = role != null ? `${role} Nouveau vote !\n\n**${question}**` : `Nouveau vote !\n\n**${question}**`;
-			const message = await interaction.reply({ content: `**${question}**`, fetchReply: true });
+			const message = await interaction.reply({ content: messageContent, fetchReply: true });
 			message.react('✅').then(() => message.react('❌'));
 		}
 	},
