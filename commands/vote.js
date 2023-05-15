@@ -42,26 +42,29 @@ module.exports = {
 		const options = interaction.options.getBoolean('options');
 		const optiona = interaction.options.getString('optiona');
 		const optionb = interaction.options.getString('optionb');
+		const optionc = interaction.options.getString('optionc');
+		const optiond = interaction.options.getString('optiond');
+		const optione = interaction.options.getString('optione');
 
 		if(options) {
 			let messageContent = `**${question}**\n`;
 			if(optiona != null && optionb != null && optionc == null) {
-				messageContent += `★ ${optiona}\n★ ${optionb}`;
+				messageContent += `★ A - ${optiona}\n★ B - ${optionb}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧'));
 			}
 			else if(optiona != null && optionb != null && optionc != null && optiond == null) {
-				messageContent += `★ ${optiona}\n★ ${optionb}\n★ ${optionc}`;
+				messageContent += `★ A - ${optiona}\n★ B - ${optionb}\n★ C - ${optionc}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧').then(() => message.react('🇨')));
 			}
 			else if(optiona != null && optionb != null && optionc != null && optiond != null && optione == null) {
-				messageContent += `★ ${optiona}\n★ ${optionb}\n★ ${optionc}\n★ ${optiond}`;
+				messageContent += `★ A - ${optiona}\n★ B - ${optionb}\n★ C - ${optionc}\n★ D - ${optiond}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧').then(() => message.react('🇨').then(() => message.react('🇩'))));
 			}
 			else if(optiona != null && optionb != null && optionc != null && optiond != null && optione != null) {
-				messageContent += `★ ${optiona}\n★ ${optionb}\n★ ${optionc}\n★ ${optiond}\n★ ${optione}`;
+				messageContent += `★ A - ${optiona}\n★ B - ${optionb}\n★ C - ${optionc}\n★ D - ${optiond}\n★ E - ${optione}`;
 				const message = await interaction.reply({ content: messageContent, fetchReply: true });
 				message.react('🇦').then(() => message.react('🇧').then(() => message.react('🇨').then(() => message.react('🇩').then(() => message.react('🇪')))));
 			}
