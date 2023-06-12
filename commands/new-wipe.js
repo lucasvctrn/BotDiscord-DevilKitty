@@ -38,6 +38,9 @@ module.exports = {
 		// Map des utilisateurs présents dans la liste 'usersYes' avec l'heure de début de jeu
 		const usersResponse = new Map();
 
+		// On récupère les membres du serveur
+		const guildMembers = await interaction.guild.members.fetch();
+
 		const wipeDate = interaction.options.getString('date');
 		const wipeDay = interaction.options.getString('date').split(' ')[0];
 		const littleGroupLimit = interaction.options.getBoolean('little-grouplimit');
@@ -52,12 +55,23 @@ module.exports = {
 	
 			const collector = message.createReactionCollector(filter);
 	
-			collector.on('collect', async (reaction, user) => {
+			collector.on('collect', async (reaction, discordUser) => {
+
+				// Récupère le membre du serveur à partir de l'id de l'utilisateur qui a réagi
+				const guildMember = guildMembers.get(discordUser.id);
+
+				// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
+				const user = {
+					discordUser: discordUser,
+					id: discordUser.id,
+					displayName: guildMember.displayName
+				};
+
 				// Récupère toutes les réactions de l'utilisateur
 				const userReactions = message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
 	
 				// Si l'utilisateur est déjà dans la liste 'usersProcessingYes', on ne tiens pas compte de sa réaction
-				if (usersProcessingYes.includes(user.username))
+				if (usersProcessingYes.some(e => e.id === user.id))
 				{
 					for (const react of userReactions.values()) {
 						if (reaction.emoji.name === react.emoji.name) {
@@ -74,59 +88,59 @@ module.exports = {
 					}
 				}
 	
-				// Supprime le nom de l'utilisateur des liste de réactions
-				if (usersYes.includes(user.username)) usersYes.splice(usersYes.indexOf(user.username), 1);
-				if (usersNotSure.includes(user.username)) usersNotSure.splice(usersNotSure.indexOf(user.username), 1);
-				if (usersNo.includes(user.username)) usersNo.splice(usersNo.indexOf(user.username), 1);
+				// Supprime l'utilisateur des listes 'usersYes', 'usersNotSure' et 'usersNo'
+				usersYes = usersYes.filter(e => e.id !== user.id);
+				usersNotSure = usersNotSure.filter(e => e.id !== user.id);
+				usersNo = usersNo.filter(e => e.id !== user.id);
 	
 				// Supprime la précédente réponse de l'utilisateur sur l'heure de début de jeu
-				if (usersResponse.has(user.username)) usersResponse.delete(user.username);
+				if (usersResponse.has(user.id)) usersResponse.delete(user.id);
 	
 				// Ajoute le nom de l'utilisateur à la liste de réactions '✅'
 				if (reaction.emoji.name === '✅') {
-					console.log(user.username + ' a réagi avec l\'emoji ✅ pour le wipe du ' + wipeDate);
-					usersProcessingYes.push(user.username);
+					console.log(user.displayName + ' a réagi avec l\'emoji ✅ pour le wipe du ' + wipeDate);
+					usersProcessingYes.push(user);
 	
 					// Envoie un message privé à l'utilisateur pour qu'il puisse indiquer l'heure de début de jeu
-					const message = await user.send(`À quelle heure tu commenceras à jouer pour le wipe du ${wipeDate} ? Réponds avec l'heure au format \`HH:MM\`, ou avec \`?\` si tu ne sais pas.`);
+					const message = await user.discordUser.send(`À quelle heure tu commenceras à jouer pour le wipe du ${wipeDate} ? Réponds avec l'heure au format \`HH:MM\`, ou avec \`?\` si tu ne sais pas.`);
 					const filter = async (response) => {
 						let validate = response.author.id === user.id && (/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/.test(response.content) || response.content === '?');
-						if (response.author.id === user.id && !validate) await user.send('La réponse doit être au format `HH:MM`, ou répond avec `?` si tu ne sais pas à quelle heure tu vas jouer.');
+						if (response.author.id === user.id && !validate) await user.discordUser.send('La réponse doit être au format `HH:MM`, ou répond avec `?` si tu ne sais pas à quelle heure tu vas jouer.');
 						return validate;
 					};
 					const collector = message.channel.createMessageCollector({ filter, max: 1, time: 60000 });
 	
 					// Ajoute la réponse de l'utilisateur à la map 'usersResponse'
 					collector.on('collect', response => {
-						console.log(user.username + ' a indiqué comme heure de début de jeu ' + response.content + ' pour le wipe du ' + wipeDate);
-						usersResponse.set(user.username, response.content);
+						console.log(user.displayName + ' a indiqué comme heure de début de jeu ' + response.content + ' pour le wipe du ' + wipeDate);
+						usersResponse.set(user.id, response.content);
 						collector.stop();
 					});
 					
 					// Si l'utilisateur n'a pas répondu à temps, on met '?' comme heure de début de jeu
 					collector.on('end', async collected => {
 						if (collected.size === 0) {
-							console.log(user.username + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate)
-							await user.send(`Tu n'as pas répondu à temps, je vais donc mettre \`?\` comme heure de début de jeu. Si tu veux changer ton heure de début de jeu, tu peux réagir à nouveau avec l'emoji ✅.`);
-							usersResponse.set(user.username, '?');
+							console.log(user.displayName + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate)
+							await user.discordUser.send(`Tu n'as pas répondu à temps, je vais donc mettre \`?\` comme heure de début de jeu. Si tu veux changer ton heure de début de jeu, tu peux réagir à nouveau avec l'emoji ✅.`);
+							usersResponse.set(user.id, '?');
 						}
-						usersProcessingYes.splice(usersProcessingYes.indexOf(user.username), 1);
-						usersYes.push(user.username);
+						usersProcessingYes.splice(usersProcessingYes.indexOf(user), 1);
+						usersYes.push(user);
 						updateMess();
 					});
 				} 
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
 				else if (reaction.emoji.name === '❓') {
-					console.log(user.username + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate)
-					usersNotSure.push(user.username);
+					console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate)
+					usersNotSure.push(user);
 					updateMess();
 				} 
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
 				else if (reaction.emoji.name === '❌') {
-					console.log(user.username + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate)
-					usersNo.push(user.username);
+					console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate)
+					usersNo.push(user);
 					updateMess();
 				}
 	
@@ -141,15 +155,15 @@ module.exports = {
 							return usersResponse.get(a) > usersResponse.get(b) ? 1 : -1;
 						});
 
-						new_content += `\n\n✅ ${usersYes.map(user => `${user} - ${usersResponse.get(user)}`).join('\n✅ ')}`;
+						new_content += `\n\n✅ ${usersYes.map(user => `${user.displayName} - ${usersResponse.get(user.id) == undefined ? "?" : usersResponse.get(user.id)}`).join('\n✅ ')}`;
 					}
 		
 					if (usersNotSure.length > 0) {
-						new_content += `\n\n❓ ${usersNotSure.join('\n❓ ')}`;
+						new_content += `\n\n❓ ${usersNotSure.map(user => `${user.displayName}`).join('\n❓ ')}`;
 					}
 		
 					if (usersNo.length > 0) {
-						new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
+						new_content += `\n\n❌ ${usersNo.map(user => `${user.displayName}`).join('\n❌ ')}`;
 					}
 		
 					message.edit({ content: new_content });

@@ -28,6 +28,9 @@ module.exports = {
 		let usersNotSure = [];
 		let usersNo = [];
 
+		// On récupère les membres du serveur
+		const guildMembers = await interaction.guild.members.fetch();
+
 		const shootingDate = interaction.options.getString('date');
 		const message = await interaction.reply({ content: `**${shootingDate}**`, fetchReply: true });
 
@@ -40,7 +43,18 @@ module.exports = {
 	
 			const collector = message.createReactionCollector(filter);
 	
-			collector.on('collect', async (reaction, user) => {
+			collector.on('collect', async (reaction, discordUser) => {
+
+				// Récupère le membre du serveur à partir de l'id de l'utilisateur qui a réagi
+				const guildMember = guildMembers.get(discordUser.id);
+
+				// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
+				const user = {
+					discordUser: discordUser,
+					id: discordUser.id,
+					displayName: guildMember.displayName
+				};
+
 				// Récupère toutes les réactions de l'utilisateur
 				const userReactions = message.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
 	
@@ -51,29 +65,29 @@ module.exports = {
 					}
 				}
 	
-				// Supprime le nom de l'utilisateur des liste de réactions
-				if (usersYes.includes(user.username)) usersYes.splice(usersYes.indexOf(user.username), 1);
-				if (usersNotSure.includes(user.username)) usersNotSure.splice(usersNotSure.indexOf(user.username), 1);
-				if (usersNo.includes(user.username)) usersNo.splice(usersNo.indexOf(user.username), 1);
+				// Supprime l'utilisateur des listes 'usersYes', 'usersNotSure' et 'usersNo'
+				usersYes = usersYes.filter(e => e.id !== user.id);
+				usersNotSure = usersNotSure.filter(e => e.id !== user.id);
+				usersNo = usersNo.filter(e => e.id !== user.id);
 	
 				// Ajoute le nom de l'utilisateur à la liste de réactions '✅'
 				if (reaction.emoji.name === '✅') {
-					console.log(user.username + ' a réagi avec l\'emoji ✅ pour le shooting du ' + shootingDate);
-					usersYes.push(user.username);
+					console.log(user.displayName + ' a réagi avec l\'emoji ✅ pour le shooting du ' + shootingDate);
+					usersYes.push(user);
 					updateMess();
 				} 
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
 				else if (reaction.emoji.name === '❓') {
-					console.log(user.username + ' a réagi avec l\'emoji ❓ pour le shooting du ' + shootingDate)
-					usersNotSure.push(user.username);
+					console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le shooting du ' + shootingDate)
+					usersNotSure.push(user);
 					updateMess();
 				} 
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
 				else if (reaction.emoji.name === '❌') {
-					console.log(user.username + ' a réagi avec l\'emoji ❌ pour le shooting du ' + shootingDate)
-					usersNo.push(user.username);
+					console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le shooting du ' + shootingDate)
+					usersNo.push(user);
 					updateMess();
 				}
 	
@@ -82,15 +96,15 @@ module.exports = {
 					let new_content = `**${shootingDate}**`;
 		
 					if (usersYes.length > 0) {
-						new_content += `\n\n✅ ${usersYes.join('\n✅ ')}`;
+						new_content += `\n\n✅ ${usersYes.map(user => `${user.displayName}`).join('\n✅ ')}`;
 					}
 		
 					if (usersNotSure.length > 0) {
-						new_content += `\n\n❓ ${usersNotSure.join('\n❓ ')}`;
+						new_content += `\n\n❓ ${usersNotSure.map(user => `${user.displayName}`).join('\n❓ ')}`;
 					}
 		
 					if (usersNo.length > 0) {
-						new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
+						new_content += `\n\n❌ ${usersNo.map(user => `${user.displayName}`).join('\n❌ ')}`;
 					}
 					
 					message.edit({ content: new_content });

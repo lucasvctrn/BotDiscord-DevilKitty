@@ -8,6 +8,9 @@ module.exports = {
 		// On envoi un messagePlanif dans la console pour indiquer que le bot est en préparation
 		console.log('Préparation du bot...\n');
 
+		// On récupère les membres du serveur
+		const guildMembers = await client.guilds.cache.get('1075506789983997966').members.fetch();
+
 		// On récupère le salon "planifs-wipes" et on cherche si des messages de planifs ont déjà été envoyés dans le salon
 		let channelPlanifWipesName = '📍planifs-wipes';
 		const channelPlanifWipes = client.channels.cache.find(channelPlanifWipes => channelPlanifWipes.name === channelPlanifWipesName);
@@ -37,25 +40,60 @@ module.exports = {
 				// On lit le messagePlanif pour récupérer la date de wipe et on supprime les '**'
 				const messageContent = messagePlanif.content;
 				const messageContentSplit = messageContent.split('\n');
-				const wipeDate = messageContentSplit[1].slice(2, messageContentSplit[1].length - 2);
+				const wipeDate = messageContentSplit[0].slice(2, messageContentSplit[1].length - 2);
 				console.log('\n★ Date de wipe : ' + wipeDate);
+		
+				// Met à jour le messagePlanif
+				function updateMess() {
+					let new_content = `**${wipeDate}**`;
+
+					if (usersYes.length > 0) {
+						usersYes.sort((a, b) => {
+							if (usersResponse.get(a) === '?') return 1;
+							if (usersResponse.get(b) === '?') return -1;
+							return usersResponse.get(a) > usersResponse.get(b) ? 1 : -1;
+						});
+
+						new_content += `\n\n✅ ${usersYes.map(user => `${user.displayName} - ${usersResponse.get(user.id) == undefined ? "?" : usersResponse.get(user.id)}`).join('\n✅ ')}`;
+					}
+		
+					if (usersNotSure.length > 0) {
+						new_content += `\n\n❓ ${usersNotSure.map(user => `${user.displayName}`).join('\n❓ ')}`;
+					}
+		
+					if (usersNo.length > 0) {
+						new_content += `\n\n❌ ${usersNo.map(user => `${user.displayName}`).join('\n❌ ')}`;
+					}
+		
+					messagePlanif.edit({ content: new_content });
+				};
 
 				// On récupère les utilisateurs qui ont réagi avec les emojis et on les ajoute dans les listes correspondantes
 				for(const reaction of messagePlanif.reactions.cache.values()) {
 					const users = await reaction.users.fetch();
-					for(const user of users.values()) {
-						if (!user.bot) {
+					for(const discordUser of users.values()) {
+						if (!discordUser.bot) {
+
+							const guildMember = guildMembers.get(discordUser.id);
+
+							// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
+							const user = {
+								discordUser: discordUser,
+								id: discordUser.id,
+								displayName: guildMember.displayName
+							};
+
 							if (reaction.emoji.name === '✅') {
-								console.log(user.username + ' a réagi avec l\'emoji ✅');
-								usersYes.push(user.username);
+								console.log(user.displayName + ' a réagi avec l\'emoji ✅');
+								usersYes.push(user);
 							}
 							else if (reaction.emoji.name === '❓') {
-								console.log(user.username + ' a réagi avec l\'emoji ❓');
-								usersNotSure.push(user.username);
+								console.log(user.displayName + ' a réagi avec l\'emoji ❓');
+								usersNotSure.push(user);
 							}
 							else if (reaction.emoji.name === '❌') {
-								console.log(user.username + ' a réagi avec l\'emoji ❌');
-								usersNo.push(user.username);
+								console.log(user.displayName + ' a réagi avec l\'emoji ❌');
+								usersNo.push(user);
 							}
 						}
 					};
@@ -65,12 +103,12 @@ module.exports = {
 				const messageUsersHoursSplit = messagePlanif.content.split('\n');
 				for(const line of messageUsersHoursSplit.values()) {
 					if (line.includes(' - ')) {
-						const user = line.split(' - ')[0].slice(2);
-						if(usersYes.includes(user))
-						{
+						const userDisplayName = line.split(' - ')[0].slice(2);
+						const user = usersYes.find(user => user.displayName === userDisplayName);
+						if(user != undefined) {
 							const userResponse = line.split(' - ')[1];
-							console.log(user + ' a indiqué comme heure de début de jeu ' + userResponse);
-							usersResponse.set(user, userResponse);
+							console.log(user.displayName + ' a indiqué comme heure de début de jeu ' + userResponse);
+							usersResponse.set(user.id, userResponse);
 						}
 					}
 				};
@@ -83,12 +121,23 @@ module.exports = {
 		
 				const collector = messagePlanif.createReactionCollector(filter);
 		
-				collector.on('collect', async (reaction, user) => {
+				collector.on('collect', async (reaction, discordUser) => {
+
+					// Récupère le membre du serveur à partir de l'id de l'utilisateur qui a réagi
+					const guildMember = guildMembers.get(discordUser.id);
+	
+					// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
+					const user = {
+						discordUser: discordUser,
+						id: discordUser.id,
+						displayName: guildMember.displayName
+					};
+	
 					// Récupère toutes les réactions de l'utilisateur
 					const userReactions = messagePlanif.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
 		
 					// Si l'utilisateur est déjà dans la liste 'usersProcessingYes', on ne tiens pas compte de sa réaction
-					if (usersProcessingYes.includes(user.username))
+					if (usersProcessingYes.includes(user))
 					{
 						for (const react of userReactions.values()) {
 							if (reaction.emoji.name === react.emoji.name) {
@@ -105,87 +154,62 @@ module.exports = {
 						}
 					}
 		
-					// Supprime le nom de l'utilisateur des liste de réactions
-					if (usersYes.includes(user.username)) usersYes.splice(usersYes.indexOf(user.username), 1);
-					if (usersNotSure.includes(user.username)) usersNotSure.splice(usersNotSure.indexOf(user.username), 1);
-					if (usersNo.includes(user.username)) usersNo.splice(usersNo.indexOf(user.username), 1);
+					// Supprime l'utilisateur des listes 'usersYes', 'usersNotSure' et 'usersNo'
+					usersYes = usersYes.filter(e => e.id !== user.id);
+					usersNotSure = usersNotSure.filter(e => e.id !== user.id);
+					usersNo = usersNo.filter(e => e.id !== user.id);
 		
 					// Supprime la précédente réponse de l'utilisateur sur l'heure de début de jeu
-					if (usersResponse.has(user.username)) usersResponse.delete(user.username);
+					if (usersResponse.has(user.id)) usersResponse.delete(user.id);
 		
 					// Ajoute le nom de l'utilisateur à la liste de réactions '✅'
 					if (reaction.emoji.name === '✅') {
-						console.log(user.username + ' a réagi avec l\'emoji ✅ pour le wipe du ' + wipeDate);
-						usersProcessingYes.push(user.username);
+						console.log(user.displayName + ' a réagi avec l\'emoji ✅ pour le wipe du ' + wipeDate);
+						usersProcessingYes.push(user);
 		
-						// Envoie un messagePlanif privé à l'utilisateur pour qu'il puisse indiquer l'heure de début de jeu
-						const messagePlanif = await user.send(`À quelle heure tu commenceras à jouer pour le wipe du ${wipeDate} ? Réponds avec l'heure au format \`HH:MM\`, ou avec \`?\` si tu ne sais pas.`);
+						// Envoie un message privé à l'utilisateur pour qu'il puisse indiquer l'heure de début de jeu
+						const privateMessage = await user.discordUser.send(`À quelle heure tu commenceras à jouer pour le wipe du ${wipeDate} ? Réponds avec l'heure au format \`HH:MM\`, ou avec \`?\` si tu ne sais pas.`);
 						const filter = async (response) => {
 							let validate = response.author.id === user.id && (/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/.test(response.content) || response.content === '?');
-							if (response.author.id === user.id && !validate) await user.send('La réponse doit être au format `HH:MM`, ou répond avec `?` si tu ne sais pas à quelle heure tu vas jouer.');
+							if (response.author.id === user.id && !validate) await user.discordUser.send('La réponse doit être au format `HH:MM`, ou répond avec `?` si tu ne sais pas à quelle heure tu vas jouer.');
 							return validate;
 						};
-						const collector = messagePlanif.channel.createMessageCollector({ filter, max: 1, time: 60000 });
+						const collector = privateMessage.channel.createMessageCollector({ filter, max: 1, time: 60000 });
 		
 						// Ajoute la réponse de l'utilisateur à la map 'usersResponse'
 						collector.on('collect', response => {
-							console.log(user.username + ' a répondu qu\'il commencera à jouer à ' + response.content + ' pour le wipe du ' + wipeDate);
-							usersResponse.set(user.username, response.content);
+							console.log(user.displayName + ' a indiqué comme heure de début de jeu ' + response.content + ' pour le wipe du ' + wipeDate);
+							usersResponse.set(user.id, response.content);
 							collector.stop();
 						});
 						
 						// Si l'utilisateur n'a pas répondu à temps, on met '?' comme heure de début de jeu
 						collector.on('end', async collected => {
 							if (collected.size === 0) {
-								console.log(user.username + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate)
-								await user.send(`Tu n'as pas répondu à temps, je vais donc mettre \`?\` comme heure de début de jeu. Si tu veux changer ton heure de début de jeu, tu peux réagir à nouveau avec l'emoji ✅.`);
-								usersResponse.set(user.username, '?');
+								console.log(user.displayName + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate)
+								await user.discordUser.send(`Tu n'as pas répondu à temps, je vais donc mettre \`?\` comme heure de début de jeu. Si tu veux changer ton heure de début de jeu, tu peux réagir à nouveau avec l'emoji ✅.`);
+								usersResponse.set(user.id, '?');
 							}
-							usersProcessingYes.splice(usersProcessingYes.indexOf(user.username), 1);
-							usersYes.push(user.username);
+							usersProcessingYes.splice(usersProcessingYes.indexOf(user), 1);
+							usersYes.push(user);
 							updateMess();
 						});
 					} 
 					
 					// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
 					else if (reaction.emoji.name === '❓') {
-						console.log(user.username + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate)
-						usersNotSure.push(user.username);
+						console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate)
+						usersNotSure.push(user);
 						updateMess();
 					} 
 					
 					// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
 					else if (reaction.emoji.name === '❌') {
-						console.log(user.username + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate)
-						usersNo.push(user.username);
+						console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate)
+						usersNo.push(user);
 						updateMess();
 					}
 				});
-		
-				// Met à jour le messagePlanif
-				function updateMess() {
-					let new_content = `**${wipeDate}**`;
-		
-					if (usersYes.length > 0) {
-						usersYes.sort((a, b) => {
-							if (usersResponse.get(a) === '?') return 1;
-							if (usersResponse.get(b) === '?') return -1;
-							return usersResponse.get(a) > usersResponse.get(b) ? 1 : -1;
-						});
-
-						new_content += `\n\n✅ ${usersYes.map(user => `${user} - ${usersResponse.get(user) == undefined ? "?" : usersResponse.get(user) }`).join('\n✅ ')}`;
-					}
-		
-					if (usersNotSure.length > 0) {
-						new_content += `\n\n❓ ${usersNotSure.join('\n❓ ')}`;
-					}
-		
-					if (usersNo.length > 0) {
-						new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
-					}
-		
-					messagePlanif.edit({ content: new_content });
-				}
 			};
 			console.log('\nFin de la récupération des messages de planifs de wipes !\n');
 		}
@@ -209,79 +233,6 @@ module.exports = {
 				let usersYes = [];
 				let usersNotSure = [];
 				let usersNo = [];
-
-				// On lit le messagePlanif pour récupérer la date de tournage et on supprime les '**'
-				const messageContent = messagePlanif.content;
-				const messageContentSplit = messageContent.split('\n');
-				const shootingDate = messageContentSplit[1].slice(2, messageContentSplit[1].length - 2);
-				console.log('\n★ Date de tournage : ' + shootingDate);
-
-				// On récupère les utilisateurs qui ont réagi avec les emojis et on les ajoute dans les listes correspondantes
-				for(const reaction of messagePlanif.reactions.cache.values()) {
-					const users = await reaction.users.fetch();
-					for(const user of users.values()) {
-						if (!user.bot) {
-							if (reaction.emoji.name === '✅') {
-								console.log(user.username + ' a réagi avec l\'emoji ✅');
-								usersYes.push(user.username);
-							}
-							else if (reaction.emoji.name === '❓') {
-								console.log(user.username + ' a réagi avec l\'emoji ❓');
-								usersNotSure.push(user.username);
-							}
-							else if (reaction.emoji.name === '❌') {
-								console.log(user.username + ' a réagi avec l\'emoji ❌');
-								usersNo.push(user.username);
-							}
-						}
-					};
-				};
-
-				updateMess();
-
-				const filter = (reaction, user) => {
-					return ['✅', '❓', '❌'].includes(reaction.emoji.name) && !user.bot;
-				};
-		
-				const collector = messagePlanif.createReactionCollector(filter);
-		
-				collector.on('collect', async (reaction, user) => {
-					// Récupère toutes les réactions de l'utilisateur
-					const userReactions = messagePlanif.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
-		
-					// Supprime toutes les réactions de l'utilisateur sauf celle qu'il vient de faire
-					for (const react of userReactions.values()) {
-						if (reaction.emoji.name !== react.emoji.name) {
-							await react.users.remove(user.id);
-						}
-					}
-		
-					// Supprime le nom de l'utilisateur des liste de réactions
-					if (usersYes.includes(user.username)) usersYes.splice(usersYes.indexOf(user.username), 1);
-					if (usersNotSure.includes(user.username)) usersNotSure.splice(usersNotSure.indexOf(user.username), 1);
-					if (usersNo.includes(user.username)) usersNo.splice(usersNo.indexOf(user.username), 1);
-		
-					// Ajoute le nom de l'utilisateur à la liste de réactions '✅'
-					if (reaction.emoji.name === '✅') {
-						console.log(user.username + ' a réagi avec l\'emoji ✅ pour le tournage du ' + shootingDate);
-						usersYes.push(user.username);
-						updateMess();
-					} 
-					
-					// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
-					else if (reaction.emoji.name === '❓') {
-						console.log(user.username + ' a réagi avec l\'emoji ❓ pour le tournage du ' + shootingDate)
-						usersNotSure.push(user.username);
-						updateMess();
-					} 
-					
-					// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
-					else if (reaction.emoji.name === '❌') {
-						console.log(user.username + ' a réagi avec l\'emoji ❌ pour le tournage du ' + shootingDate)
-						usersNo.push(user.username);
-						updateMess();
-					}
-				});
 		
 				// Met à jour le messagePlanif
 				function updateMess() {
@@ -300,7 +251,101 @@ module.exports = {
 					}
 		
 					messagePlanif.edit({ content: new_content });
-				}
+				};
+
+				// On lit le messagePlanif pour récupérer la date de tournage et on supprime les '**'
+				const messageContent = messagePlanif.content;
+				const messageContentSplit = messageContent.split('\n');
+				const shootingDate = messageContentSplit[1].slice(2, messageContentSplit[1].length - 2);
+				console.log('\n★ Date de tournage : ' + shootingDate);
+
+				// On récupère les utilisateurs qui ont réagi avec les emojis et on les ajoute dans les listes correspondantes
+				for(const reaction of messagePlanif.reactions.cache.values()) {
+					const users = await reaction.users.fetch();
+					for(const user of users.values()) {
+
+						const guildMember = guildMembers.get(discordUser.id);
+
+						// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
+						const user = {
+							discordUser: discordUser,
+							id: discordUser.id,
+							displayName: guildMember.displayName
+						};
+
+						if (!user.bot) {
+							if (reaction.emoji.name === '✅') {
+								console.log(user.displayName + ' a réagi avec l\'emoji ✅');
+								usersYes.push(user);
+							}
+							else if (reaction.emoji.name === '❓') {
+								console.log(user.displayName + ' a réagi avec l\'emoji ❓');
+								usersNotSure.push(user);
+							}
+							else if (reaction.emoji.name === '❌') {
+								console.log(user.displayName + ' a réagi avec l\'emoji ❌');
+								usersNo.push(user);
+							}
+						}
+					};
+				};
+
+				updateMess();
+
+				const filter = (reaction, user) => {
+					return ['✅', '❓', '❌'].includes(reaction.emoji.name) && !user.bot;
+				};
+		
+				const collector = messagePlanif.createReactionCollector(filter);
+		
+				collector.on('collect', async (reaction, discordUser) => {
+
+					// Récupère le membre du serveur à partir de l'id de l'utilisateur qui a réagi
+					const guildMember = guildMembers.get(discordUser.id);
+	
+					// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
+					const user = {
+						discordUser: discordUser,
+						id: discordUser.id,
+						displayName: guildMember.displayName
+					};
+	
+					// Récupère toutes les réactions de l'utilisateur
+					const userReactions = messagePlanif.reactions.cache.filter(reaction => reaction.users.cache.has(user.id));
+		
+					// Supprime toutes les réactions de l'utilisateur sauf celle qu'il vient de faire
+					for (const react of userReactions.values()) {
+						if (reaction.emoji.name !== react.emoji.name) {
+							await react.users.remove(user.id);
+						}
+					}
+		
+					// Supprime l'utilisateur des listes 'usersYes', 'usersNotSure' et 'usersNo'
+					usersYes = usersYes.filter(e => e.id !== user.id);
+					usersNotSure = usersNotSure.filter(e => e.id !== user.id);
+					usersNo = usersNo.filter(e => e.id !== user.id);
+		
+					// Ajoute le nom de l'utilisateur à la liste de réactions '✅'
+					if (reaction.emoji.name === '✅') {
+						console.log(user.displayName + ' a réagi avec l\'emoji ✅ pour le shooting du ' + shootingDate);
+						usersYes.push(user);
+						updateMess();
+					} 
+					
+					// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
+					else if (reaction.emoji.name === '❓') {
+						console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le shooting du ' + shootingDate)
+						usersNotSure.push(user);
+						updateMess();
+					} 
+					
+					// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
+					else if (reaction.emoji.name === '❌') {
+						console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le shooting du ' + shootingDate)
+						usersNo.push(user);
+						updateMess();
+					}
+				});
 			};
 			console.log('\nFin de la récupération des messages de planifs de tournages !\n');
 		}
