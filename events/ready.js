@@ -42,31 +42,6 @@ module.exports = {
 				const messageContentSplit = messageContent.split('\n');
 				const wipeDate = messageContentSplit[0].slice(2, messageContentSplit[1].length - 2);
 				console.log('\n★ Date de wipe : ' + wipeDate);
-		
-				// Met à jour le messagePlanif
-				function updateMess() {
-					let new_content = `**${wipeDate}**`;
-
-					if (usersYes.length > 0) {
-						usersYes.sort((a, b) => {
-							if (usersResponse.get(a) === '?') return 1;
-							if (usersResponse.get(b) === '?') return -1;
-							return usersResponse.get(a) > usersResponse.get(b) ? 1 : -1;
-						});
-
-						new_content += `\n\n✅ ${usersYes.map(user => `${user.displayName} - ${usersResponse.get(user.id) == undefined ? "?" : usersResponse.get(user.id)}`).join('\n✅ ')}`;
-					}
-		
-					if (usersNotSure.length > 0) {
-						new_content += `\n\n❓ ${usersNotSure.map(user => `${user.displayName}`).join('\n❓ ')}`;
-					}
-		
-					if (usersNo.length > 0) {
-						new_content += `\n\n❌ ${usersNo.map(user => `${user.displayName}`).join('\n❌ ')}`;
-					}
-		
-					messagePlanif.edit({ content: new_content });
-				};
 
 				// On récupère les utilisateurs qui ont réagi avec les emojis et on les ajoute dans les listes correspondantes
 				for(const reaction of messagePlanif.reactions.cache.values()) {
@@ -210,6 +185,31 @@ module.exports = {
 						updateMess();
 					}
 				});
+		
+				// Met à jour le messagePlanif
+				function updateMess() {
+					let new_content = `**${wipeDate}**`;
+
+					if (usersYes.length > 0) {
+						usersYes.sort((a, b) => {
+							if (usersResponse.get(a.id) === '?') return 1;
+							if (usersResponse.get(b.id) === '?') return -1;
+							return usersResponse.get(a.id) > usersResponse.get(b.id) ? 1 : -1;
+						});
+
+						new_content += `\n\n✅ ${usersYes.map(user => `${user.displayName} - ${usersResponse.get(user.id) == undefined ? "?" : usersResponse.get(user.id)}`).join('\n✅ ')}`;
+					}
+		
+					if (usersNotSure.length > 0) {
+						new_content += `\n\n❓ ${usersNotSure.map(user => `${user.displayName}`).join('\n❓ ')}`;
+					}
+		
+					if (usersNo.length > 0) {
+						new_content += `\n\n❌ ${usersNo.map(user => `${user.displayName}`).join('\n❌ ')}`;
+					}
+		
+					messagePlanif.edit({ content: new_content });
+				};
 			};
 			console.log('\nFin de la récupération des messages de planifs de wipes !\n');
 		}

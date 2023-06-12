@@ -150,9 +150,10 @@ module.exports = {
 		
 					if (usersYes.length > 0) {
 						usersYes.sort((a, b) => {
-							if (usersResponse.get(a) === '?') return 1;
-							if (usersResponse.get(b) === '?') return -1;
-							return usersResponse.get(a) > usersResponse.get(b) ? 1 : -1;
+							console.log("usersResponse.get(a) : " + usersResponse.get(a) + ', usersResponse.get(b) : ' + usersResponse.get(b));
+							if (usersResponse.get(a.id) === '?') return 1;
+							if (usersResponse.get(b.id) === '?') return -1;
+							return usersResponse.get(a.id) > usersResponse.get(b.id) ? 1 : -1;
 						});
 
 						new_content += `\n\n✅ ${usersYes.map(user => `${user.displayName} - ${usersResponse.get(user.id) == undefined ? "?" : usersResponse.get(user.id)}`).join('\n✅ ')}`;
