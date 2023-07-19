@@ -91,7 +91,7 @@
 				}
 			],
 			"group_limit": "0",
-			"ip": "45.88.230.93:28024",
+			"ip": "64.40.9.13:28024",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13065465"
 		},
 		{
@@ -189,7 +189,7 @@
 				}
 			],
 			"group_limit": "3",
-			"ip": "64.52.81.234:28014",
+			"ip": "64.40.9.13:28014",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13728671"
 		}
 	]
