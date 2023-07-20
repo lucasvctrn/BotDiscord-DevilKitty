@@ -51,7 +51,7 @@ module.exports = {
 		const optiond = interaction.options.getString('optiond');
 		const optione = interaction.options.getString('optione');
 
-		console.log(`Question : ${question}`)
+		console.log(`Question : ${question}`);
 
 		if(options) {
 			// Création du message avec mention du rôle si il est renseigné
@@ -84,12 +84,12 @@ module.exports = {
 			}
 			else {
 				// Retourne une erreur à l'utilisateur si il n'a pas renseigné au moins deux options
-				console.log('Commande annulée : l\'utilisateur n\'a pas renseigné au moins deux options.')
+				console.log('Commande annulée : l\'utilisateur n\'a pas renseigné au moins deux options.');
 				return interaction.reply({ content: 'Erreur : Vous devez renseigner au moins deux options.', ephemeral: true });
 			}
 		}
 		else {
-			console.log('Vote sans options')
+			console.log('Vote sans options');
 			// Création du message avec mention du rôle si il est renseigné
 			let messageContent = role != null ? `${role} Nouveau vote !\n\n**${question}**` : `Nouveau vote !\n\n**${question}**`;
 			const message = await interaction.reply({ content: messageContent, fetchReply: true });

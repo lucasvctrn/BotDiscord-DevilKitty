@@ -120,7 +120,7 @@ module.exports = {
 					// Si l'utilisateur n'a pas répondu à temps, on met '?' comme heure de début de jeu
 					collector.on('end', async collected => {
 						if (collected.size === 0) {
-							console.log(user.displayName + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate)
+							console.log(user.displayName + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate);
 							await user.discordUser.send(`Tu n'as pas répondu à temps, je vais donc mettre \`?\` comme heure de début de jeu. Si tu veux changer ton heure de début de jeu, tu peux réagir à nouveau avec l'emoji ✅.`);
 							usersResponse.set(user.id, '?');
 						}
@@ -132,14 +132,14 @@ module.exports = {
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
 				else if (reaction.emoji.name === '❓') {
-					console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate)
+					console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate);
 					usersNotSure.push(user);
 					updateMess();
 				} 
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
 				else if (reaction.emoji.name === '❌') {
-					console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate)
+					console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate);
 					usersNo.push(user);
 					updateMess();
 				}

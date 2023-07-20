@@ -27,7 +27,7 @@ module.exports = {
 					if(messagePlanif.content === undefined) continue;
 					
 					// Si la première ligne du message est "__**Prochains wipes**__", on passe au message suivant
-					if (messagePlanif.content.startsWith('__**Prochains wipes**__')) continue;
+					if (messagePlanif.content.startsWith('__**Prochains wipes**__') || messagePlanif.content.startsWith('__**Prochains wipes viewers**__')) continue;
 
 					// Liste des utilisateurs qui sont en train de répondre à l'heure de début de jeu
 					let usersProcessingYes = [];
@@ -189,7 +189,7 @@ module.exports = {
 							// Si l'utilisateur n'a pas répondu à temps, on met '?' comme heure de début de jeu
 							collector.on('end', async collected => {
 								if (collected.size === 0) {
-									console.log(user.displayName + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate)
+									console.log(user.displayName + ' n\'a pas répondu à temps pour l\'heure de début de jeu pour le wipe du ' + wipeDate);
 									await user.discordUser.send(`Tu n'as pas répondu à temps, je vais donc mettre \`?\` comme heure de début de jeu. Si tu veux changer ton heure de début de jeu, tu peux réagir à nouveau avec l'emoji ✅.`);
 									usersResponse.set(user.id, '?');
 								}
@@ -201,14 +201,14 @@ module.exports = {
 						
 						// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
 						else if (reaction.emoji.name === '❓') {
-							console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate)
+							console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le wipe du ' + wipeDate);
 							usersNotSure.push(user);
 							updateMess();
 						} 
 						
 						// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
 						else if (reaction.emoji.name === '❌') {
-							console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate)
+							console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le wipe du ' + wipeDate);
 							usersNo.push(user);
 							updateMess();
 						}
@@ -216,7 +216,7 @@ module.exports = {
 				}
 			};
 		}
-		
+
 		console.log('\nFin de la récupération des messages de planifs de wipes !\n');
 
 		// On récupère le salon "planifs-tournages" et on cherche si des messages de planifs ont déjà été envoyés dans le salon
@@ -267,29 +267,31 @@ module.exports = {
 				// On récupère les utilisateurs qui ont réagi avec les emojis et on les ajoute dans les listes correspondantes
 				for(const reaction of messagePlanif.reactions.cache.values()) {
 					const users = await reaction.users.fetch();
-					for(const user of users.values()) {
+					for(const discordUser of users.values()) {
+						if (!discordUser.bot) {
 
-						const guildMember = guildMembers.get(discordUser.id);
+							const guildMember = guildMembers.get(discordUser.id);
 
-						// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
-						const user = {
-							discordUser: discordUser,
-							id: discordUser.id,
-							displayName: guildMember.displayName
-						};
+							// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
+							const user = {
+								discordUser: discordUser,
+								id: discordUser.id,
+								displayName: guildMember.displayName
+							};
 
-						if (!user.bot) {
-							if (reaction.emoji.name === '✅') {
-								console.log(user.displayName + ' a réagi avec l\'emoji ✅');
-								usersYes.push(user);
-							}
-							else if (reaction.emoji.name === '❓') {
-								console.log(user.displayName + ' a réagi avec l\'emoji ❓');
-								usersNotSure.push(user);
-							}
-							else if (reaction.emoji.name === '❌') {
-								console.log(user.displayName + ' a réagi avec l\'emoji ❌');
-								usersNo.push(user);
+							if (!user.bot) {
+								if (reaction.emoji.name === '✅') {
+									console.log(user.displayName + ' a réagi avec l\'emoji ✅');
+									usersYes.push(user);
+								}
+								else if (reaction.emoji.name === '❓') {
+									console.log(user.displayName + ' a réagi avec l\'emoji ❓');
+									usersNotSure.push(user);
+								}
+								else if (reaction.emoji.name === '❌') {
+									console.log(user.displayName + ' a réagi avec l\'emoji ❌');
+									usersNo.push(user);
+								}
 							}
 						}
 					};
@@ -339,14 +341,14 @@ module.exports = {
 					
 					// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
 					else if (reaction.emoji.name === '❓') {
-						console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le shooting du ' + shootingDate)
+						console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le shooting du ' + shootingDate);
 						usersNotSure.push(user);
 						updateMess();
 					} 
 					
 					// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
 					else if (reaction.emoji.name === '❌') {
-						console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le shooting du ' + shootingDate)
+						console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le shooting du ' + shootingDate);
 						usersNo.push(user);
 						updateMess();
 					}

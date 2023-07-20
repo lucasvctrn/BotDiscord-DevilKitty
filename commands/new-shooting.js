@@ -79,14 +79,14 @@ module.exports = {
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❓'
 				else if (reaction.emoji.name === '❓') {
-					console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le shooting du ' + shootingDate)
+					console.log(user.displayName + ' a réagi avec l\'emoji ❓ pour le shooting du ' + shootingDate);
 					usersNotSure.push(user);
 					updateMess();
 				} 
 				
 				// Ajoute le nom de l'utilisateur à la liste de réactions '❌'
 				else if (reaction.emoji.name === '❌') {
-					console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le shooting du ' + shootingDate)
+					console.log(user.displayName + ' a réagi avec l\'emoji ❌ pour le shooting du ' + shootingDate);
 					usersNo.push(user);
 					updateMess();
 				}
