@@ -243,17 +243,17 @@ module.exports = {
 				function updateMess() {
 					let new_content = `**${shootingDate}**`;
 		
-					if (usersYes.length > 0) {
-						new_content += `\n\n✅ ${usersYes.join('\n✅ ')}`;
-					}
-		
-					if (usersNotSure.length > 0) {
-						new_content += `\n\n❓ ${usersNotSure.join('\n❓ ')}`;
-					}
-		
-					if (usersNo.length > 0) {
-						new_content += `\n\n❌ ${usersNo.join('\n❌ ')}`;
-					}
+						if (usersYes.length > 0) {
+							new_content += `\n\n✅ ${usersYes.map(user => `${user.displayName}`).join('\n✅ ')}`;
+						}
+			
+						if (usersNotSure.length > 0) {
+							new_content += `\n\n❓ ${usersNotSure.map(user => `${user.displayName}`).join('\n❓ ')}`;
+						}
+			
+						if (usersNo.length > 0) {
+							new_content += `\n\n❌ ${usersNo.map(user => `${user.displayName}`).join('\n❌ ')}`;
+						}
 		
 					messagePlanif.edit({ content: new_content });
 				};
@@ -261,7 +261,7 @@ module.exports = {
 				// On lit le messagePlanif pour récupérer la date de tournage et on supprime les '**'
 				const messageContent = messagePlanif.content;
 				const messageContentSplit = messageContent.split('\n');
-				const shootingDate = messageContentSplit[1].slice(2, messageContentSplit[1].length - 2);
+				const shootingDate = messageContentSplit[0].slice(2, messageContentSplit[1].length - 2);
 				console.log('\n★ Date de tournage : ' + shootingDate);
 
 				// On récupère les utilisateurs qui ont réagi avec les emojis et on les ajoute dans les listes correspondantes

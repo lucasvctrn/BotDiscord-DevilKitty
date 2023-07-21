@@ -23,7 +23,7 @@ module.exports = {
 		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️')) 
 		{
 			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️", on envoie un message d'erreur
-			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️)');
+			console.log('\n★ Commande annulée : /new-wipe (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️)');
 			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
 		}
 
@@ -205,13 +205,20 @@ module.exports = {
 			if(selectedServer) break;
 		}
 
+		// Génération d'un code aléatoire à 4 chiffres pour le wipe
+		let code = Math.floor(Math.random() * 9000) + 1000;
+		while (code.toString().match(/(.)\1{2,}/) || code === 10000) {
+			code = Math.floor(Math.random() * 9000) + 1000;
+		}
+		let codeString = `🔢 Code pour ce wipe : **${code}**`;
+
 		// Envoie les infos du serveur dans le fil de discussion
 		if(selectedServer) {
 			let wipeType = selectedServer.wipes.find(wipe => wipe.day === wipeDay).type;
 			let groupLimit = selectedServer.group_limit == 0 ? "No Group Limit" : `Group Limit ${selectedServer.group_limit}`;
 			const teamDKRole = message.guild.roles.cache.find(role => role.name === '⚜️ Team DK ⚜️');
 			const teammateRole = message.guild.roles.cache.find(role => role.name === '🕹️ Teammate 🕹️');
-			thread.send(`<@&${teamDKRole.id}> <@&${teammateRole.id}> Voici le fil dédié au wipe du ${wipeDate} avec les informations du serveur.\n\n**${selectedServer.name}**\n★ ${wipeType === "FullWipe" ? wipeType : `${wipeType} (planning : https://survivors.gg/#wipe)` }\n★ ${groupLimit}\n★ connect ${selectedServer.ip}\n★ ${selectedServer.battlemetrics}`);
+			thread.send(`<@&${teamDKRole.id}> <@&${teammateRole.id}> Voici le fil dédié au wipe du **${wipeDate}** avec un code généré automatiquement et les informations du serveur.\n\n${codeString}\n\n**${selectedServer.name}**\n★ ${wipeType === "FullWipe" ? wipeType : `${wipeType} (planning : https://survivors.gg/#wipe)` }\n★ ${groupLimit}\n★ connect ${selectedServer.ip}\n★ ${selectedServer.battlemetrics}`);
 		}
 	},
 };

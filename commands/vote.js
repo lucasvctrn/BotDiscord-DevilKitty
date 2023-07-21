@@ -36,8 +36,7 @@ module.exports = {
 			option.setName('optione')
 						.setDescription('Option E du vote')
 						.setRequired(false))
-		.setDMPermission(false)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+		.setDMPermission(false),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /vote');

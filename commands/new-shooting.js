@@ -19,7 +19,7 @@ module.exports = {
 		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️')) 
 		{
 			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️", on envoie un message d'erreur
-			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️)');
+			console.log('\n★ Commande annulée : /new-shooting (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️)');
 			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
 		}
 
