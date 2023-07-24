@@ -12,7 +12,7 @@ module.exports = {
 		const guildMembers = await client.guilds.cache.get('1075506789983997966').members.fetch();
 
 		// On récupère les salons de planifications de wipes et on cherche si des messages de planifs ont déjà été envoyés dans le salon
-		let channelPlanifWipesList = ['📍planifs-wipes', '📍planifs-wipes-viewers'];
+		let channelPlanifWipesList = ['📍planifs-wipes', '📍planifs-wipes-communautaires'];
 		for(let i = 0; i < channelPlanifWipesList.length; i++)
 		{
 			let channelPlanifWipesName = channelPlanifWipesList[i];
@@ -27,7 +27,7 @@ module.exports = {
 					if(messagePlanif.content === undefined) continue;
 					
 					// Si la première ligne du message est "__**Prochains wipes**__", on passe au message suivant
-					if (messagePlanif.content.startsWith('__**Prochains wipes**__') || messagePlanif.content.startsWith('__**Prochains wipes viewers**__')) continue;
+					if (messagePlanif.content.startsWith('__**Prochains wipes**__') || messagePlanif.content.startsWith('__**Prochains wipes communautaires**__')) continue;
 
 					// Liste des utilisateurs qui sont en train de répondre à l'heure de début de jeu
 					let usersProcessingYes = [];
