@@ -16,7 +16,7 @@
 				}
 			],
 			"group_limit": "4",
-			"ip": "45.88.230.202:28014",
+			"ip": "45.88.230.93:28014",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/11900765"
 		},
 		{
@@ -63,7 +63,7 @@
 				}
 			],
 			"group_limit": "8",
-			"ip": "64.52.81.49:28024",
+			"ip": "195.60.166.94:28024",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/14474564"
 		},
 		{
@@ -77,7 +77,7 @@
 				}
 			],
 			"group_limit": "3",
-			"ip": "45.88.230.97:28024",
+			"ip": "195.60.166.86:28024",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/14702579"
 		},
 		{
@@ -91,7 +91,7 @@
 				}
 			],
 			"group_limit": "0",
-			"ip": "64.40.9.13:28024",
+			"ip": "45.88.230.70:28014",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13065465"
 		},
 		{
@@ -105,7 +105,7 @@
 				}
 			],
 			"group_limit": "8",
-			"ip": "209.237.141.10:28015",
+			"ip": "64.52.81.49:28024",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/12550139"
 		},
 		{
@@ -133,7 +133,7 @@
 				}
 			],
 			"group_limit": "0",
-			"ip": "154.6.138.9:28015",
+			"ip": "205.178.168.166:28010",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/12240141"
 		},
 		{
@@ -161,7 +161,7 @@
 				}
 			],
 			"group_limit": "4",
-			"ip": "45.88.230.97:28014",
+			"ip": "195.60.166.86:28014",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/14702633"
 		},
 		{
@@ -175,7 +175,7 @@
 				}
 			],
 			"group_limit": "0",
-			"ip": "45.88.230.93:28014",
+			"ip": "45.88.230.70:28024",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13744721"
 		},
 		{
@@ -189,7 +189,7 @@
 				}
 			],
 			"group_limit": "3",
-			"ip": "64.40.9.13:28014",
+			"ip": "195.60.166.94:28014",
 			"battlemetrics": "https://www.battlemetrics.com/servers/rust/13728671"
 		}
 	]
