@@ -44,7 +44,35 @@ module.exports = {
 		const wipeDate = interaction.options.getString('date');
 		const wipeDay = interaction.options.getString('date').split(' ')[0];
 		const littleGroupLimit = interaction.options.getBoolean('little-grouplimit');
-		const message = await interaction.reply({ content: `**${wipeDate}**`, fetchReply: true });
+
+		// Récupération des infos du serveur
+		let rawdata = fs.readFileSync('wipes.json');
+		let servers = (JSON.parse(rawdata)).servers;
+		let selectedServer;
+		let wipeHour;
+		for (let server of servers) {
+			for(let wipe of server.wipes) {
+				if (wipe.day === wipeDay) {
+					if(littleGroupLimit) {
+						if(server.group_limit < 8 && server.group_limit > 0) {
+							selectedServer = server;
+							wipeHour = wipe.hour;
+							break;
+						}
+					}
+					else {
+						if(server.group_limit >= 8 || server.group_limit == 0) {
+							selectedServer = server;
+							wipeHour = wipe.hour;
+							break;
+						}
+					}
+				}
+			}
+			if(selectedServer) break;
+		}
+
+		const message = await interaction.reply({ content: `**${wipeDate} - ${wipeHour}**`, fetchReply: true });
 
 		console.log('\n★ Nouveau wipe prévu le : ' + wipeDate);
 
@@ -102,7 +130,7 @@ module.exports = {
 					usersProcessingYes.push(user);
 	
 					// Envoie un message privé à l'utilisateur pour qu'il puisse indiquer l'heure de début de jeu
-					const message = await user.discordUser.send(`À quelle heure tu commenceras à jouer pour le wipe du ${wipeDate} ? Réponds avec l'heure au format \`HH:MM\`, ou avec \`?\` si tu ne sais pas.`);
+					const message = await user.discordUser.send(`À quelle heure tu commenceras à jouer pour le wipe du ${wipeDate} à ${wipeHour} ? Réponds avec l'heure au format \`HH:MM\`, ou avec \`?\` si tu ne sais pas.`);
 					const filter = async (response) => {
 						let validate = response.author.id === user.id && (/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/.test(response.content) || response.content === '?');
 						if (response.author.id === user.id && !validate) await user.discordUser.send('La réponse doit être au format `HH:MM`, ou répond avec `?` si tu ne sais pas à quelle heure tu vas jouer.');
@@ -146,7 +174,7 @@ module.exports = {
 	
 				// Met à jour le message
 				function updateMess() {
-					let new_content = `**${wipeDate}**`;
+					let new_content = `**${wipeDate} - ${wipeHour}**`;
 		
 					if (usersYes.length > 0) {
 						usersYes.sort((a, b) => {
@@ -173,37 +201,13 @@ module.exports = {
 
 		// Création du fil de discussion pour le wipe
 		const thread = await message.startThread({
-			name: `${wipeDate}`,
+			name: `${wipeDate} - ${wipeHour}`,
 			autoArchiveDuration: 60,
-			reason: `Planification du wipe du ${wipeDate}`,
+			reason: `Planification du wipe du ${wipeDate} à ${wipeHour}`,
 		});
 
 		// Modification de la durée d'archivage automatique du fil de discussion (10 080 minutes = 7 jours)
 		thread.setAutoArchiveDuration(10080);
-
-		// Récupération des infos du serveur
-		let rawdata = fs.readFileSync('wipes.json');
-		let servers = (JSON.parse(rawdata)).servers;
-		let selectedServer;
-		for (let server of servers) {
-			for(let wipe of server.wipes) {
-				if (wipe.day === wipeDay) {
-					if(littleGroupLimit) {
-						if(server.group_limit < 8 && server.group_limit > 0) {
-							selectedServer = server;
-							break;
-						}
-					}
-					else {
-						if(server.group_limit >= 8 || server.group_limit == 0) {
-							selectedServer = server;
-							break;
-						}
-					}
-				}
-			}
-			if(selectedServer) break;
-		}
 
 		// Génération d'un code aléatoire à 4 chiffres pour le wipe
 		let code = Math.floor(Math.random() * 9000) + 1000;
@@ -218,7 +222,7 @@ module.exports = {
 			let groupLimit = selectedServer.group_limit == 0 ? "No Group Limit" : `Group Limit ${selectedServer.group_limit}`;
 			const teamDKRole = message.guild.roles.cache.find(role => role.name === '⚜️ Team DK ⚜️');
 			const teammateRole = message.guild.roles.cache.find(role => role.name === '🕹️ Teammate 🕹️');
-			thread.send(`<@&${teamDKRole.id}> <@&${teammateRole.id}> Voici le fil dédié au wipe du **${wipeDate}** avec un code généré automatiquement et les informations du serveur.\n\n${codeString}\n\n**${selectedServer.name}**\n★ ${wipeType === "FullWipe" ? wipeType : `${wipeType} (planning : https://survivors.gg/#wipe)` }\n★ ${groupLimit}\n★ connect ${selectedServer.ip}`);
+			thread.send(`<@&${teamDKRole.id}> <@&${teammateRole.id}> Voici le fil dédié au wipe du **${wipeDate}** à **${wipeHour}** avec un code généré automatiquement et les informations du serveur.\n\n${codeString}\n\n**${selectedServer.name}**\n★ Wipe ${wipeDay} à ${wipeHour}\n★ ${wipeType} (planning : https://survivors.gg/#wipe)\n★ ${groupLimit}\n★ connect ${selectedServer.ip}`);
 		}
 	},
 };
