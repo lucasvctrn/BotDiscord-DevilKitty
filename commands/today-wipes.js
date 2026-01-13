@@ -46,7 +46,6 @@ module.exports = {
 			}
 			string += `\n★ ${server.group_limit == 0 ? "No Group Limit" : `Group Limit ${server.group_limit}`}`;
 			string += `\n★ connect ${server.ip}`;
-			string += `\n★ ${server.battlemetrics}`;
 		}
 		await interaction.reply(string);
 	}

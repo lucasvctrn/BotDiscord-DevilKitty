@@ -218,7 +218,7 @@ module.exports = {
 			let groupLimit = selectedServer.group_limit == 0 ? "No Group Limit" : `Group Limit ${selectedServer.group_limit}`;
 			const teamDKRole = message.guild.roles.cache.find(role => role.name === '⚜️ Team DK ⚜️');
 			const teammateRole = message.guild.roles.cache.find(role => role.name === '🕹️ Teammate 🕹️');
-			thread.send(`<@&${teamDKRole.id}> <@&${teammateRole.id}> Voici le fil dédié au wipe du **${wipeDate}** avec un code généré automatiquement et les informations du serveur.\n\n${codeString}\n\n**${selectedServer.name}**\n★ ${wipeType === "FullWipe" ? wipeType : `${wipeType} (planning : https://survivors.gg/#wipe)` }\n★ ${groupLimit}\n★ connect ${selectedServer.ip}\n★ ${selectedServer.battlemetrics}`);
+			thread.send(`<@&${teamDKRole.id}> <@&${teammateRole.id}> Voici le fil dédié au wipe du **${wipeDate}** avec un code généré automatiquement et les informations du serveur.\n\n${codeString}\n\n**${selectedServer.name}**\n★ ${wipeType === "FullWipe" ? wipeType : `${wipeType} (planning : https://survivors.gg/#wipe)` }\n★ ${groupLimit}\n★ connect ${selectedServer.ip}`);
 		}
 	},
 };
