@@ -21,7 +21,7 @@ module.exports = {
 
 			// Si des messages de planifs ont déjà été envoyés, on créé un collecteur pour chaque message pour récupérer les réactions des utilisateurs
 			if (messagesPlanifWipes.size > 0) {
-				console.log('Des messages de planifs de wipes ont déjà été envoyés dans le salon ', channelPlanifWipesName,', récupération des messages...');
+				console.log('Récupération des messages de planifs de wipes dans le salon ', channelPlanifWipesName,'...');
 				for(const messagePlanif of messagesPlanifWipes.values()) {
 					// Si le message est vide, on passe au message suivant
 					if(messagePlanif.content === undefined) continue;
@@ -226,7 +226,7 @@ module.exports = {
 
 		// Si des messages de planifs ont déjà été envoyés, on créé un collecteur pour chaque message pour récupérer les réactions des utilisateurs
 		if (messagesPlanifShooting.size > 0) {
-			console.log('Des messages de planifs de tournages ont déjà été envoyés dans le salon "planifs-tournages", récupération des messages...');
+			console.log('Récupération des messages de planifs de tournages dans le salon ', channelPlanifShootingName,'...');
 			for(const messagePlanif of messagesPlanifShooting.values()) {
 				// Si le message est vide, on passe au message suivant
 				if(messagePlanif.content === undefined) continue;

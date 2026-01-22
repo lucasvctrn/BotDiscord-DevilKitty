@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('vote')
-		.setDescription('Créer un nouveau vote')
+		.setDescription('Créé un nouveau vote, en mentionnant un rôle et avec différentes propositions de réponses')
 		.addStringOption(option => 
 			option.setName('question')
 						.setDescription('Question du vote')
@@ -40,6 +40,14 @@ module.exports = {
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /vote');
+
+		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "⚜️ Team DK ⚜️" ou "🕹️ Teammate 🕹️"
+		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️' || role.name === '🕹️ Teammate 🕹️')) 
+		{
+			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️" ou "🕹️ Teammate 🕹️", on envoie un message d'erreur
+			console.log('\n★ Commande annulée : /vote (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️ ou 🕹️ Teammate 🕹️)');
+			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
+		}
 
 		const question = interaction.options.getString('question');
 		const role = interaction.options.getRole('role');

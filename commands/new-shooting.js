@@ -4,13 +4,12 @@ const fs = require('fs');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('new-shooting')
-		.setDescription('Créer un nouveau tournage')
+		.setDescription('Crée un nouveau tournage')
 		.addStringOption(option => 
 			option.setName('date')
-						.setDescription('Date du tournage')
+						.setDescription('Date du tournage (exemple : Vendredi 12 Septembre)')
 						.setRequired(true))
-		.setDMPermission(false)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+		.setDMPermission(false),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /new-shooting');

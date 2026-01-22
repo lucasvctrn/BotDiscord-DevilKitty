@@ -4,8 +4,7 @@ const fs = require('fs');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('today-wipes')
-		.setDescription('Liste les wipes du jour')
-		.setDMPermission(false),
+		.setDescription('Liste les serveurs qui wipent aujourd\'hui'),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /today-wipes');
@@ -13,7 +12,7 @@ module.exports = {
 		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "⚜️ Team DK ⚜️" ou "🕹️ Teammate 🕹️"
 		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️' || role.name === '🕹️ Teammate 🕹️')) 
 		{
-			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️", on envoie un message d'erreur
+			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️" ou "🕹️ Teammate 🕹️", on envoie un message d'erreur
 			console.log('\n★ Commande annulée : /today-wipes (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️ ou 🕹️ Teammate 🕹️)');
 			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
 		}
@@ -27,7 +26,7 @@ module.exports = {
 		let todayWipesServers = [];
 		for (let server of servers) {
 			for(let wipe of server.wipes) {
-				if (wipe.day.toLowerCase() === today) {
+				if (wipe.day.toLowerCase() === today.toLowerCase()) {
 					todayWipesServers.push(server);
 					break;
 				}
@@ -39,7 +38,7 @@ module.exports = {
 		for (let server of todayWipesServers) {
 			string += `\n\n**${server.name}**`;
 			for(let wipe of server.wipes) {
-				if (wipe.day.toLowerCase() === today) {
+				if (wipe.day.toLowerCase() === today.toLowerCase()) {
 					string += `\n★ Wipe aujourd'hui à ${wipe.hour}`;
 					string += `\n★ ${wipe.type === "FullWipe" ? "FullWipe" : `${wipe.type} (planning : https://survivors.gg/#wipe)` }`;
 				};

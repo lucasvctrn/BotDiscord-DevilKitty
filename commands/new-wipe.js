@@ -4,17 +4,16 @@ const fs = require('fs');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('new-wipe')
-		.setDescription('Créer un nouveau wipe')
+		.setDescription('Crée un nouveau wipe à une date donnée, avec les informations sur le serveur et un code à 4 chiffres généré aléatoirement')
 		.addStringOption(option => 
 			option.setName('date')
-						.setDescription('Date du wipe')
+						.setDescription('Date du wipe (exemple : Vendredi 12 Septembre)')
 						.setRequired(true))
-		.addBooleanOption(option =>
-			option.setName('little-grouplimit')
-						.setDescription('Mettre oui pour sélectionner un serveur avec un petit group-limit')
+		.addIntegerOption(option =>
+			option.setName('grouplimit-min')
+						.setDescription('Grouplimit minimum (exemple : 4)')
 						.setRequired(false))
-		.setDMPermission(false)
-		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
+		.setDMPermission(false),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /new-wipe');
@@ -43,34 +42,47 @@ module.exports = {
 
 		const wipeDate = interaction.options.getString('date');
 		const wipeDay = interaction.options.getString('date').split(' ')[0];
-		const littleGroupLimit = interaction.options.getBoolean('little-grouplimit');
+		const groupLimitMin = interaction.options.getInteger('grouplimit-min');
 
 		// Récupération des infos du serveur
 		let rawdata = fs.readFileSync('wipes.json');
 		let servers = (JSON.parse(rawdata)).servers;
+		let candidateServers = [];
 		let selectedServer;
-		let wipeHour;
+
+		// Récupération des serveurs qui wipent le jour donné
 		for (let server of servers) {
-			for(let wipe of server.wipes) {
-				if (wipe.day === wipeDay) {
-					if(littleGroupLimit) {
-						if(server.group_limit < 8 && server.group_limit > 0) {
-							selectedServer = server;
-							wipeHour = wipe.hour;
-							break;
-						}
-					}
-					else {
-						if(server.group_limit >= 8 || server.group_limit == 0) {
-							selectedServer = server;
-							wipeHour = wipe.hour;
-							break;
-						}
-					}
+			for (let wipe of server.wipes) {
+				if (wipe.day.toLowerCase() === wipeDay.toLowerCase()) {
+					candidateServers.push(server);
+					break;
 				}
 			}
-			if(selectedServer) break;
 		}
+
+		// Si grouplimit-min fourni, on cherche le serveur >= grouplimit-min le plus proche
+		if (groupLimitMin !== null) {
+			let eligibleServers = candidateServers.filter(server => server.group_limit >= groupLimitMin);
+			
+			if (eligibleServers.length > 0) {
+				// On prend celui dont la différence avec groupLimitMin est minimale
+				selectedServer = eligibleServers.reduce((prev, curr) => {
+					return (curr.group_limit - groupLimitMin < prev.group_limit - groupLimitMin) ? curr : prev;
+				});
+			} else {
+				// Aucun serveur >= groupLimitMin, fallback sur le serveur avec le grouplimit le plus haut
+				selectedServer = candidateServers.reduce((prev, curr) => {
+					return (curr.group_limit > prev.group_limit) ? curr : prev;
+				});
+			}
+		} else {
+			// Pas de grouplimit-min fourni, on prend le serveur avec le grouplimit le plus haut
+			selectedServer = candidateServers.reduce((prev, curr) => {
+				return (curr.group_limit > prev.group_limit) ? curr : prev;
+			});
+		}
+
+		let	wipeHour = selectedServer.wipes.find(wipe => wipe.day.toLowerCase() === wipeDay.toLowerCase()).hour;
 
 		const message = await interaction.reply({ content: `**${wipeDate} - ${wipeHour}**`, fetchReply: true });
 
@@ -218,7 +230,7 @@ module.exports = {
 
 		// Envoie les infos du serveur dans le fil de discussion
 		if(selectedServer) {
-			let wipeType = selectedServer.wipes.find(wipe => wipe.day === wipeDay).type;
+			let wipeType = selectedServer.wipes.find(wipe => wipe.day.toLowerCase() === wipeDay.toLowerCase()).type;
 			let groupLimit = selectedServer.group_limit == 0 ? "No Group Limit" : `Group Limit ${selectedServer.group_limit}`;
 			const teamDKRole = message.guild.roles.cache.find(role => role.name === '⚜️ Team DK ⚜️');
 			const teammateRole = message.guild.roles.cache.find(role => role.name === '🕹️ Teammate 🕹️');

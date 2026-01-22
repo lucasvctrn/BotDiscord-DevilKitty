@@ -4,12 +4,11 @@ const fs = require('fs');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('day-wipes')
-		.setDescription('Liste les wipes qui ont lieu à une journée donnée')
+		.setDescription('Liste les wipes qui wipent un jour donné')
 		.addStringOption(option => 
 			option.setName('day')
-						.setDescription('Journée du wipe (ex: lundi, mardi, ...)')
-						.setRequired(true))
-		.setDMPermission(false),
+						.setDescription('Jour du wipe (exemple : Lundi)')
+						.setRequired(true)),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /day-wipes');
@@ -17,19 +16,19 @@ module.exports = {
 		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "⚜️ Team DK ⚜️" ou "🕹️ Teammate 🕹️"
 		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️' || role.name === '🕹️ Teammate 🕹️')) 
 		{
-			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️", on envoie un message d'erreur
+			// Si l'utilisateur n'est pas membre du rôle "⚜️ Team DK ⚜️" ou "🕹️ Teammate 🕹️", on envoie un message d'erreur
 			console.log('\n★ Commande annulée : /day-wipes (l\'utilisateur n\'est pas membre du rôle ⚜️ Team DK ⚜️ ou 🕹️ Teammate 🕹️)');
 			return interaction.reply({ content: `Vous n'avez pas la permission d'utiliser cette commande.`, ephemeral: true });
 		}
 
-		const wipeDay = interaction.options.getString('day').toLowerCase();
-		// Récupération des serveurs qui wipent le jour saisi
+		const wipeDay = interaction.options.getString('day');
+		// Récupération des serveurs qui wipent le jour donné
 		let rawdata = fs.readFileSync('wipes.json');
 		let servers = (JSON.parse(rawdata)).servers;
 		let dayWipesServers = [];
 		for (let server of servers) {
 			for(let wipe of server.wipes) {
-				if (wipe.day.toLowerCase() === wipeDay) {
+				if (wipe.day.toLowerCase() === wipeDay.toLowerCase()) {
 					dayWipesServers.push(server);
 					break;
 				}
@@ -44,7 +43,7 @@ module.exports = {
 		for (let server of dayWipesServers) {
 			string += `\n\n**${server.name}**`;
 			for(let wipe of server.wipes) {
-				if (wipe.day.toLowerCase() === wipeDay) {
+				if (wipe.day.toLowerCase() === wipeDay.toLowerCase()) {
 					string += `\n★ ${wipe.day} à ${wipe.hour}`;
 					string += `\n★ ${wipe.type === "FullWipe" ? "FullWipe" : `${wipe.type} (planning : https://survivors.gg/#wipe)` }`;
 				};
