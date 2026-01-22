@@ -24,7 +24,7 @@ const rest = new REST({ version: '10' }).setToken(token);
 		);
 		// Ajoute les commandes
 		const data = await rest.put(
-			Routes.applicationCommands(clientId, guildId),
+			Routes.applicationGuildCommands(clientId, guildId),
 			{ body: commands },
 		);
 
