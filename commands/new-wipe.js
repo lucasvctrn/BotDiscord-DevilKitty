@@ -4,7 +4,7 @@ const fs = require('fs');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('new-wipe')
-		.setDescription('Crée un nouveau wipe à une date donnée, avec les informations sur le serveur et un code à 4 chiffres généré aléatoirement')
+		.setDescription('Crée un nouveau wipe à une date donnée avec les informations sur le serveur et un code à 4 chiffres')
 		.addStringOption(option => 
 			option.setName('date')
 						.setDescription('Date du wipe (exemple : Vendredi 12 Septembre)')
