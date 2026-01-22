@@ -46,9 +46,6 @@ module.exports = {
 		// Map des utilisateurs présents dans la liste 'usersYes' avec l'heure de début de jeu
 		const usersResponse = new Map();
 
-		// On récupère les membres du serveur
-		const guildMembers = await interaction.guild.members.fetch();
-
 		const wipeDate = interaction.options.getString('date');
 		const wipeDay = interaction.options.getString('date').split(' ')[0];
 		const groupLimitMin = interaction.options.getInteger('grouplimit-min');
@@ -120,7 +117,13 @@ module.exports = {
 			collector.on('collect', async (reaction, discordUser) => {
 
 				// Récupère le membre du serveur à partir de l'id de l'utilisateur qui a réagi
-				const guildMember = guildMembers.get(discordUser.id);
+				let guildMember;
+				try {
+					guildMember = await interaction.guild.members.fetch(discordUser.id);
+				} catch (err) {
+					console.log(`Impossible de récupérer ${discordUser.tag}: ${err}`);
+					return;
+				}
 
 				// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
 				const user = {

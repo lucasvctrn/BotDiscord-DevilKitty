@@ -27,9 +27,6 @@ module.exports = {
 		let usersNotSure = [];
 		let usersNo = [];
 
-		// On récupère les membres du serveur
-		const guildMembers = await interaction.guild.members.fetch();
-
 		const shootingDate = interaction.options.getString('date');
 		const message = await interaction.reply({ content: `**${shootingDate}**`, fetchReply: true });
 
@@ -45,7 +42,13 @@ module.exports = {
 			collector.on('collect', async (reaction, discordUser) => {
 
 				// Récupère le membre du serveur à partir de l'id de l'utilisateur qui a réagi
-				const guildMember = guildMembers.get(discordUser.id);
+				let guildMember;
+				try {
+					guildMember = await interaction.guild.members.fetch(discordUser.id);
+				} catch (err) {
+					console.log(`Impossible de récupérer ${discordUser.tag}: ${err}`);
+					return;
+				}
 
 				// Créé un objet stockant l'id de l'utilisateur, son nom d'utilisateur et son pseudo sur le serveur
 				const user = {
