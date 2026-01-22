@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const { guildId } = require('./config.json');
+const { guildId } = require('../config.json');
 
 module.exports = {
 	name: Events.ClientReady,
