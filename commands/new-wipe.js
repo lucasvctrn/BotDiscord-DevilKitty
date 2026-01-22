@@ -13,10 +13,19 @@ module.exports = {
 			option.setName('grouplimit-min')
 						.setDescription('Grouplimit minimum (exemple : 4)')
 						.setRequired(false))
+		.addBooleanOption(option =>
+			option.setName('monthly')
+						.setDescription('Option pour sélectionner le monthly')
+						.setRequired(false))
 		.setDMPermission(false),
 
 	async execute(interaction) {
 		console.log('\n★ Commande appelée : /new-wipe');
+
+		// Fonction pour traiter les serveurs avec group_limit = 0 comme illimités
+    function getEffectiveGroupLimit(server) {
+			return server.group_limit > 0 ? server.group_limit : Infinity;
+    }
 
 		// Vérifie que l'utilisateur qui a appelé la commande est bien membre du rôle "⚜️ Team DK ⚜️"
 		if (!interaction.member.roles.cache.some(role => role.name === '⚜️ Team DK ⚜️')) 
@@ -43,6 +52,7 @@ module.exports = {
 		const wipeDate = interaction.options.getString('date');
 		const wipeDay = interaction.options.getString('date').split(' ')[0];
 		const groupLimitMin = interaction.options.getInteger('grouplimit-min');
+		const monthly = interaction.options.getBoolean('monthly');
 
 		// Récupération des infos du serveur
 		let rawdata = fs.readFileSync('wipes.json');
@@ -60,26 +70,38 @@ module.exports = {
 			}
 		}
 
-		// Si grouplimit-min fourni, on cherche le serveur >= grouplimit-min le plus proche
-		if (groupLimitMin !== null) {
-			let eligibleServers = candidateServers.filter(server => server.group_limit >= groupLimitMin);
-			
-			if (eligibleServers.length > 0) {
-				// On prend celui dont la différence avec groupLimitMin est minimale
-				selectedServer = eligibleServers.reduce((prev, curr) => {
-					return (curr.group_limit - groupLimitMin < prev.group_limit - groupLimitMin) ? curr : prev;
-				});
-			} else {
-				// Aucun serveur >= groupLimitMin, fallback sur le serveur avec le grouplimit le plus haut
-				selectedServer = candidateServers.reduce((prev, curr) => {
-					return (curr.group_limit > prev.group_limit) ? curr : prev;
-				});
+		// Si l'utilisateur veut le serveur monthly
+		if (monthly) {
+			const monthlyServer = candidateServers.find(server => server.monthly === true);
+			if (monthlyServer) {
+				selectedServer = monthlyServer;
 			}
 		} else {
-			// Pas de grouplimit-min fourni, on prend le serveur avec le grouplimit le plus haut
-			selectedServer = candidateServers.reduce((prev, curr) => {
-				return (curr.group_limit > prev.group_limit) ? curr : prev;
-			});
+			candidateServers = candidateServers.filter(server => server.monthly !== true);
+		}
+
+		if (!selectedServer) {
+			// Si grouplimit-min fourni, on cherche le serveur >= grouplimit-min le plus proche
+			if (groupLimitMin !== null) {
+				let eligibleServers = candidateServers.filter(server => getEffectiveGroupLimit(server) >= groupLimitMin);
+				
+				if (eligibleServers.length > 0) {
+					// On prend celui dont la différence avec groupLimitMin est minimale
+					selectedServer = eligibleServers.reduce((prev, curr) => {
+						return (getEffectiveGroupLimit(curr) - groupLimitMin < getEffectiveGroupLimit(prev) - groupLimitMin) ? curr : prev;
+					});
+				} else {
+					// Aucun serveur >= groupLimitMin, fallback sur le serveur avec le grouplimit le plus haut
+					selectedServer = candidateServers.reduce((prev, curr) => {
+						return (getEffectiveGroupLimit(curr) > getEffectiveGroupLimit(prev)) ? curr : prev;
+					});
+				}
+			} else {
+				// Pas de grouplimit-min fourni, on prend le serveur avec le grouplimit le plus haut
+				selectedServer = candidateServers.reduce((prev, curr) => {
+					return (getEffectiveGroupLimit(curr) > getEffectiveGroupLimit(prev)) ? curr : prev;
+				});
+			}
 		}
 
 		let	wipeHour = selectedServer.wipes.find(wipe => wipe.day.toLowerCase() === wipeDay.toLowerCase()).hour;

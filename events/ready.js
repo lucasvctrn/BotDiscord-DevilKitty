@@ -1,4 +1,5 @@
 const { Events } = require('discord.js');
+const { guildId } = require('./config.json');
 
 module.exports = {
 	name: Events.ClientReady,
@@ -9,7 +10,7 @@ module.exports = {
 		console.log('Préparation du bot...\n');
 
 		// On récupère les membres du serveur
-		const guildMembers = await client.guilds.cache.get('1075506789983997966').members.fetch();
+		const guildMembers = await client.guilds.cache.get(guildId).members.fetch();
 
 		// On récupère les salons de planifications de wipes et on cherche si des messages de planifs ont déjà été envoyés dans le salon
 		let channelPlanifWipesList = ['📍planifs-wipes', '📍planifs-wipes-communautaires'];
